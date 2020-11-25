@@ -1,6 +1,6 @@
-# Flashcards
-Python Flashcard Project. <br>
-Webbased Flashcard Learning App written with Flask.
+# Kicards
+Webbasierte Karteikarten App. <br>
+  written with Flask
 
 ## Features
 You can 
