@@ -28,6 +28,8 @@ ALMS-Framework <br>
 
 ## Todos
 - Fehlermeldung bei doppelten Lektionen
+- Gui: Lektion anklicken und danach filtern
+- Wahr/Falsch Button anders platzieren
 
 
 
@@ -35,6 +37,7 @@ ALMS-Framework <br>
 You can 
 * Registrierung eines User Accounts
 * Erstellung eigener Themengebiete  
+* Erstellung verschiedener Lektionen
 * Erstellung von Karteikarten in den Themengebieten
 * Abfrage der Karteikarten
 * Angabe von Richtig oder Falsch
