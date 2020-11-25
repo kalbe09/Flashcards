@@ -1,6 +1,23 @@
 # Kicards
-Webbasierte Karteikarten App. <br>
-  written with Flask
+Webbasierte Karteikarten App <br>
+
+Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der Open Education Richtlinien erstellt worden.<br>
+ALMS-Framework <br>
+  * «A» (Access to editing tools), <br>
+  (a) Betriebssystemunabhängigkeit <br>
+			(b) Freiheit  der  Bearbeitungssoftware <br>
+	• «L» (Level of expertise required to revise or remix), <br>
+		○ benötigte Expertise zur Software-Nutzung <br>
+			(a) sollte möglichst  gering  sein <br>
+	• «M» (Meaningfully editable) <br>
+		  (a) Editierbarkeit  der erstellten Materialien <br>
+	• «S» (Source-file access) zur Präzisierung technischer Offenheit vorgestellt. <br>
+      (a) Verfügbarkeit der Quellmaterialien. <br>
+
+
+## Gewünschte Funktionen
+
+
 
 ## Features
 You can 
