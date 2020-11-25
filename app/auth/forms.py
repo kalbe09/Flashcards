@@ -32,35 +32,35 @@ class RegistrationForm(FlaskForm):
 
 
 class ChangePasswordForm(FlaskForm):
-    old_password = PasswordField('Old password', validators=[DataRequired()])
-    password = PasswordField('New password', validators=[
+    old_password = PasswordField('Altes Passwort', validators=[DataRequired()])
+    password = PasswordField('Neues Passwort', validators=[
         DataRequired(), EqualTo('password2', message='Password must match')])
-    password2 = PasswordField('Confirm new password', validators=[DataRequired()])
-    submit = SubmitField('Update Password')
+    password2 = PasswordField('Bestätige dein Passwort', validators=[DataRequired()])
+    submit = SubmitField('Passwort ändern')
 
 
 class PasswordResetRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
-    submit = SubmitField('Reset Password')
+    submit = SubmitField('Passwort zurücksetzen')
 
 
 class PasswordResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
-    password = PasswordField('New password', validators=[
-        DataRequired(), EqualTo('password2', message='Password must match')])
-    password2 = PasswordField('Confirm password', validators=[DataRequired()])
-    submit = SubmitField('Reset Password')
+    password = PasswordField('Neues Passwort', validators=[
+        DataRequired(), EqualTo('password2', message='Paswörter müssen übereinstimmen')])
+    password2 = PasswordField('Passwort bestätigen', validators=[DataRequired()])
+    submit = SubmitField('Passwort zurücksetzen')
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first() is None:
-            raise ValidationError('Unknown email address.')
+            raise ValidationError('Unbekannte Email-Adresse.')
 
 
 class ChangeEmailForm(FlaskForm):
-    email = StringField('New Email', validators=[DataRequired(), Length(1, 64), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Update Email Address')
+    email = StringField('Neue Email', validators=[DataRequired(), Length(1, 64), Email()])
+    password = PasswordField('Passwort', validators=[DataRequired()])
+    submit = SubmitField('Email-Addresse ändern')
 
     def validate_email(self, field):
         if User.query.filter_by(email=field.data).first():
-            raise ValidationError('Email already address.')
+            raise ValidationError('Email schon vorhanden.')
