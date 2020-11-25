@@ -53,7 +53,7 @@ def add_collection():
         collection.user = current_user
         db.session.add(collection)
         db.session.commit()
-        flash('Flashcard Collection added.')
+        flash('Fach hinzugefügt')
         return redirect(url_for('.index'))
     return render_template('add_collection.html', form=form)
 
@@ -79,7 +79,7 @@ def delete_flashcardcollection(id):
     flashcardcollection = FlashcardCollection.query.get_or_404(id)
     db.session.delete(flashcardcollection)
     db.session.commit()
-    flash('Flashcardcollection {0} has been deleted'.format(flashcardcollection.name))
+    flash('Fach {0} wurde gelöscht'.format(flashcardcollection.name))
     return redirect(request.referrer)
 
 
@@ -93,7 +93,7 @@ def add_flashcard(id):
         flashcardcollection.flashcards.append(card)
         db.session.add(flashcardcollection)
         db.session.commit()
-        flash('Flashcard added to the Collection {0}'.format(flashcardcollection.name))
+        flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(flashcardcollection.name))
         if form.next.data:
             return redirect(url_for('.add_flashcard', id=flashcardcollection.id))
         else:

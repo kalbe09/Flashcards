@@ -11,7 +11,7 @@
 
 {% block page_content %}
     <div class="page-header">
-        <h1>Add a new Flashcard Collection</h1>
+        <h1>Füge ein neues Fach hinzu</h1>
     </div>
     <div class="col-md-4">
         <form method="post">
@@ -22,9 +22,9 @@
             </div>
             <div class="form-group">
                 {{ form.category.label }}
-                {{ form.category(size=60, class="form-control", placeholder="Category", id="category") }}
+                {{ form.category(size=60, class="form-control", placeholder="Lektion", id="category") }}
             </div>
-            <button type="submit" class="btn btn-default">Submit</button>
+            <button type="submit" class="btn btn-default">Bestätigen</button>
         </form>
     </div>
 {% endblock %}

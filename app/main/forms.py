@@ -5,19 +5,19 @@ from wtforms.validators import DataRequired
 
 
 class FlashcardCollectionForm(FlaskForm):
-    name = StringField('Collection name', validators=[DataRequired()])
-    category = StringField('Category', validators=[DataRequired()])
-    submit = SubmitField('Add')
+    name = StringField('Name', validators=[DataRequired()])
+    category = StringField('Lektion', validators=[DataRequired()])
+    submit = SubmitField('Hinzufügen')
 
 
 class FlashcardForm(FlaskForm):
-    question = PageDownField('Question', validators=[DataRequired()])
-    answer = PageDownField('Answer', validators=[DataRequired()])
-    next = BooleanField('Next Flashcard?')
-    submit = SubmitField('Add')
+    question = PageDownField('Frage', validators=[DataRequired()])
+    answer = PageDownField('Antwort', validators=[DataRequired()])
+    next = BooleanField('Nächste Karte?')
+    submit = SubmitField('Hinzufügen')
 
 
 class EditFlashcardForm(FlaskForm):
-    question = PageDownField('Question', validators=[DataRequired()])
-    answer = PageDownField('Answer', validators=[DataRequired()])
-    submit = SubmitField('Add')
+    question = PageDownField('Frage', validators=[DataRequired()])
+    answer = PageDownField('Antwort', validators=[DataRequired()])
+    submit = SubmitField('Hinzufügen')
