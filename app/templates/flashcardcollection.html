@@ -9,6 +9,11 @@
             <span class="label label-primary">{{ category.name }}</span>
         {% endfor %}
         <br>
+        <br>
+        <a href="{{ url_for('.add_category', id=flashcardcollection.id) }}">
+            <span class="label label-default">Lektion hinzufügen</span></a>
+        </a>
+        <br>
         <div class="margTop">
             <p class="label label-default">{{ flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).count() }} Kicard/s</p>
             <p class="label label-danger">{{ flashcardcollection.flashcards.filter_by(wrong_answered=True).count() }} Falsche Antworten</p>

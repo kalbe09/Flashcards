@@ -17,8 +17,8 @@
         <form method="post">
             {{ form.csrf_token }}
             <div class="form-group">
-                {{ form.category.select }}
-                {{ form.category(size=60, class="form-control", placeholder="Lektion", id="category") }}
+                {{ form.name.select }}
+                {{ form.name(size=60, class="form-control", placeholder="Lektion", id="category") }}
             </div>
             <button type="submit" class="btn btn-default">Bestätigen</button>
         </form>

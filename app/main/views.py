@@ -50,9 +50,9 @@ def user(username):
 def add_collection():
     form = FlashcardCollectionForm()
     if form.validate_on_submit():
-        category = Category.query.filter_by(name=form.category.data).first()
+        category = Category.query.filter_by(name=form.name.data).first()
         if category is None:
-            category = Category(name=form.category.data)
+            category = Category(name=form.name.data)
         collection = FlashcardCollection(name=form.name.data)
         collection.categories.append(category)
         collection.user = current_user
@@ -67,9 +67,9 @@ def add_collection():
 def add_category():
     form = FlashcardCategoryForm()
     if form.validate_on_submit():
-        category = Category.query.filter_by(name=form.category.data).first()
+        category = Category.query.filter_by(name=form.name.data).first()
         if category is None:
-            category = Category(name=form.category.data)
+            category = Category(name=form.name.data)
         collection = FlashcardCollection(name=form.name.data)
         collection.categories.append(category)
         collection.user = current_user
@@ -115,6 +115,13 @@ def get_category():
 def flashcardcollection(id):
     flashcardcollection = FlashcardCollection.query.get_or_404(id)
     return render_template('flashcardcollection.html', flashcardcollection=flashcardcollection)
+
+@main.route('/flashcardcategory/<int:id>')
+@login_required
+def flashcardcategory(collId, catid):
+    flashcardcollection = FlashcardCollection.query.get_or_404(collId)
+    category = flashcardcollection.categories.filter_by(id=catid).first()
+    return render_template('flashcardcategory.html', flashcardcollection=flashcardcollection, Category=category)
 
 @main.route('/flashcardcollection/<int:collId>/flashcard/<int:cardId>')
 @login_required

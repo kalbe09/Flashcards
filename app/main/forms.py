@@ -10,7 +10,7 @@ class FlashcardCollectionForm(FlaskForm):
     submit = SubmitField('Hinzufügen')
 
 class FlashcardCategoryForm(FlaskForm):
-    category = StringField('Lektion', validators=[DataRequired()])
+    name = StringField('Lektion', validators=[DataRequired()])
     submit = SubmitField('Hinzufügen')
 
 
