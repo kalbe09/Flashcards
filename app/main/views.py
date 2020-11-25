@@ -40,6 +40,11 @@ def user(username):
     return render_template('user.html', user=user, collections=collections)
 
 
+
+
+# *********************************************************************************************************************
+# Add 
+# *********************************************************************************************************************
 @main.route('/add-collection', methods=['GET', 'POST'])
 @login_required
 def add_collection():
@@ -75,30 +80,6 @@ def add_category():
     return render_template('add_category.html', form=form)
 
 
-@main.route('/get-category', methods=['GET', 'POST'])
-@login_required
-def get_category():
-    return jsonify({
-        'category': [category.name for category in Category.query.order_by(Category.name).all()]
-    })
-
-
-@main.route('/flashcardcollection/<int:id>')
-@login_required
-def flashcardcollection(id):
-    flashcardcollection = FlashcardCollection.query.get_or_404(id)
-    return render_template('flashcardcollection.html', flashcardcollection=flashcardcollection)
-
-
-@main.route('/flashcardcollection/<int:id>/delete')
-@login_required
-def delete_flashcardcollection(id):
-    flashcardcollection = FlashcardCollection.query.get_or_404(id)
-    db.session.delete(flashcardcollection)
-    db.session.commit()
-    flash('Fach {0} wurde gelöscht'.format(flashcardcollection.name))
-    return redirect(request.referrer)
-
 
 @main.route('/flashcardcollection/<int:id>/add-flashcard', methods=['GET', 'POST'])
 @login_required
@@ -117,6 +98,23 @@ def add_flashcard(id):
             return redirect(url_for('.flashcardcollection', id=flashcardcollection.id))
     return render_template('add_flashcard.html', form=form, name=flashcardcollection.name)
 
+# *********************************************************************************************************************
+# Get 
+# *********************************************************************************************************************
+
+@main.route('/get-category', methods=['GET', 'POST'])
+@login_required
+def get_category():
+    return jsonify({
+        'category': [category.name for category in Category.query.order_by(Category.name).all()]
+    })
+
+
+@main.route('/flashcardcollection/<int:id>')
+@login_required
+def flashcardcollection(id):
+    flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    return render_template('flashcardcollection.html', flashcardcollection=flashcardcollection)
 
 @main.route('/flashcardcollection/<int:collId>/flashcard/<int:cardId>')
 @login_required
@@ -127,6 +125,30 @@ def flashcard(collId, cardId):
         abort(404)
     return render_template('flashcard.html', flashcardcollection=flashcardcollection, flashcard=flashcard)
 
+# *********************************************************************************************************************
+# Delete 
+# *********************************************************************************************************************
+
+@main.route('/flashcardcollection/<int:id>/delete')
+@login_required
+def delete_flashcardcollection(id):
+    flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    db.session.delete(flashcardcollection)
+    db.session.commit()
+    flash('Fach {0} wurde gelöscht'.format(flashcardcollection.name))
+    return redirect(request.referrer)
+
+@main.route('/flashcardcollection/<int:collId>/delete-flashcard/<int:cardId>')
+@login_required
+def delete_card(collId, cardId):
+    flashcard = Flashcard.query.get_or_404(cardId)
+    db.session.delete(flashcard)
+    db.session.commit()
+    return redirect(url_for('.flashcardcollection', id=collId))
+
+# *********************************************************************************************************************
+# Edit 
+# *********************************************************************************************************************
 
 @main.route('/flashcardcollection/<int:collId>/flashcard/<int:cardId>/edit', methods=['GET', 'POST'])
 @login_required
@@ -147,6 +169,11 @@ def edit_flashcard(collId, cardId):
     form.answer.data = flashcard.answer
     return render_template('edit_flashcard.html', form=form, flashcard=flashcard)
 
+
+
+# *********************************************************************************************************************
+# Learning 
+# *********************************************************************************************************************
 
 @main.route('/flashcardcollection/<int:id>/learn')
 @login_required
@@ -180,14 +207,6 @@ def reset_cards(id):
     db.session.commit()
     return redirect(url_for('.flashcardcollection', id=id))
 
-
-@main.route('/flashcardcollection/<int:collId>/delete-flashcard/<int:cardId>')
-@login_required
-def delete_card(collId, cardId):
-    flashcard = Flashcard.query.get_or_404(cardId)
-    db.session.delete(flashcard)
-    db.session.commit()
-    return redirect(url_for('.flashcardcollection', id=collId))
 
 
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/wrong')
