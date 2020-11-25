@@ -1,5 +1,5 @@
 {% if current_user.is_authenticated %}
-    <h2>Your Flashcard Collections:</h2>
+    <h2>Deine Fächer:</h2>
     <div class="flex-row row">
 
     {% for collection in collections %}
@@ -13,10 +13,15 @@
                         {% endfor %}
                     </div>
                 </header>
-                <p class="flex-text">{{ collection.flashcards.count() }} Flashcards in this Collection</p>
+                <p class="flex-text">{{ collection.flashcards.count() }} Karteikarten in dem Fach</p>
                 <div class="delete">
                     <a href="{{ url_for('.delete_flashcardcollection', id=collection.id) }}">
-                        <span class="label label-danger ">Delete</span>
+                        <span class="label label-danger ">Löschen</span>
+                    </a>
+                </div>
+                <div class="delete">
+                    <a href="{{ url_for('.add_category', id=collection.id) }}">
+                        <span class="label label-danger ">Lektion hinzufügen</span>
                     </a>
                 </div>
             </article>

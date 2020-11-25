@@ -2,52 +2,67 @@
 Webbasierte Karteikarten App <br>
 
 Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der Open Education Richtlinien erstellt worden.<br>
+
 ALMS-Framework <br>
-  * «A» (Access to editing tools), <br>
-  (a) Betriebssystemunabhängigkeit <br>
-			(b) Freiheit  der  Bearbeitungssoftware <br>
-	• «L» (Level of expertise required to revise or remix), <br>
-		○ benötigte Expertise zur Software-Nutzung <br>
-			(a) sollte möglichst  gering  sein <br>
-	• «M» (Meaningfully editable) <br>
-		  (a) Editierbarkeit  der erstellten Materialien <br>
-	• «S» (Source-file access) zur Präzisierung technischer Offenheit vorgestellt. <br>
-      (a) Verfügbarkeit der Quellmaterialien. <br>
+* «A» (Access to editing tools), <br>
+  * Betriebssystemunabhängigkeit <br>
+  * Freiheit  der  Bearbeitungssoftware <br>
+* «L» (Level of expertise required to revise or remix), <br>
+  * benötigte Expertise zur Software-Nutzung <br>
+  * sollte möglichst  gering  sein <br>
+* «M» (Meaningfully editable) <br>
+	* Editierbarkeit  der erstellten Materialien <br>
+* «S» (Source-file access) zur Präzisierung technischer Offenheit vorgestellt. <br>
+  * Verfügbarkeit der Quellmaterialien. <br>
 
 
 ## Gewünschte Funktionen
 * Votesystem, um schlechte Karten auszusortieren
+* Import / Export 
+* Online-Repository, um Änderungen in Echtzeit zu verfolgen
+* Editorleiste für einfachere Erstellung von KK
+* Erstellung: nächste Karte (immer nächste Karte)
+* Neue Lektion erstellen
+* Seit dem 25th November 2020 ein registrierter Benutzer
+  * Datum auf Deutsch ändern
+
+## Todos
+- Fehlermeldung bei doppelten Lektionen
 
 
-## Features
+
+## Funkionen
 You can 
-* Register an User Account
-* Each User could create their own Flashcard Collections
-* Create Flashcards in that Collections
-* Learn the Collection
-* Mark the Flashcard as Wrong or Right answered
-* Only learn the Wrong Answered Flashcards
-* Question and Answer of the Flashcards allow Markdown Text
+* Registrierung eines User Accounts
+* Erstellung eigener Themengebiete  
+* Erstellung von Karteikarten in den Themengebieten
+* Abfrage der Karteikarten
+* Angabe von Richtig oder Falsch
+* Nur die falschen Karteikarten lernen
+* Markdown Text für die Erstellung und Bearbeitung
 
 
 ## Installation
-1. Install the Requirements
+1. Anforderungen installieren
 
-```pip3 install -r requriements/common.txt```
+```pip install -r requirements/common.txt```
 
-2. Setup the Database
+2. Datenbank erstellen
 
-```
-python3 manage.py db init
+```python3 manage.py db init```
+- Erstellt den Ordner migrations
 
-python3 manage.py db migrate
+```python3 manage.py db migrate```
 
-python3 manage.py db upgrade
-```
 
-3. Run the Application
+```python3 manage.py db upgrade```
+
+3. Webapplikation / Server starten
 
 ```python3 manage.py runserver```
+
+
+
 
 The Application was created and tested with Python Version 3.5
 

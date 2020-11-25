@@ -4,14 +4,14 @@
 
 {% block page_content %}
     <div class="page-header">
-        <h1> {{ flashcardcollection.name }} / Flashcard {{ flashcard.id }} </h1>
+        <h1> {{ flashcardcollection.name }} / Karteikarte {{ flashcard.id }} </h1>
 
         <a href="{{ url_for('.edit_flashcard', collId=flashcardcollection.id, cardId=flashcard.id) }}">
-            <span class="label label-primary">Edit</span>
+            <span class="label label-primary">Bearbeiten</span>
         </a>
     </div>
     <div>
-        <h2>Question</h2>
+        <h2>Frage</h2>
         <div class="flashcard-body">
             {% if flashcard.question_html %}
                 <p>{{ flashcard.question_html|safe }}</p>
@@ -19,7 +19,7 @@
                 <p>{{ flashcard.question }}</p>
             {% endif %}
         </div>
-        <h2>Answer</h2>
+        <h2>Antwort</h2>
         <div class="flashcard-body">
             {% if flashcard.answer_html %}
                 <p>{{ flashcard.answer_html|safe }}</p>

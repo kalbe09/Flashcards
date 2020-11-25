@@ -9,21 +9,23 @@
             <span class="label label-primary">{{ category.name }}</span>
         {% endfor %}
         <br>
+        <br>
+        <a href="{{ url_for('.add_category', id=flashcardcollection.id) }}">
+            <span class="label label-default">Lektion hinzufügen</span></a>
+        </a>
+        <br>
         <div class="margTop">
-            <p class="label label-default">{{ flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).count() }} Flashcards in
-                this Collection.</p>
-            <p class="label label-danger">{{ flashcardcollection.flashcards.filter_by(wrong_answered=True).count() }} wrong
-                answered</p>
-            <p class="label label-success">{{ flashcardcollection.flashcards.filter_by(right_answered=True).count() }} right
-                answered</p>
+            <p class="label label-default">{{ flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).count() }} Kicard/s</p>
+            <p class="label label-danger">{{ flashcardcollection.flashcards.filter_by(wrong_answered=True).count() }} Falsche Antworten</p>
+            <p class="label label-success">{{ flashcardcollection.flashcards.filter_by(right_answered=True).count() }} Richtige Antworten</p>
         </div>
     </div>
     <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='normal') }}"><span
-            class="btn btn-primary btn-learn">Learn All</span></a>
+            class="btn btn-primary btn-learn">Alle lernen</span></a>
     <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='wrong_ones') }}"><span
-            class="btn btn-danger btn-learn">Learn Wrong Ones</span></a>
+            class="btn btn-danger btn-learn">Falsche lernen</span></a>
     <a href="{{ url_for('.reset_cards', id=flashcardcollection.id) }}"><span
-            class="btn btn-warning btn-learn">Reset Cards</span></a>
+            class="btn btn-warning btn-learn">Lernstand zurücksetzen</span></a>
     {% include "_flashcard.html" %}
 
 {% endblock %}

@@ -8,9 +8,9 @@ function showAnswer() {
 
     if(displaySetting == 'block') {
         answer.style.display = 'none';
-        showAnswerButton.innerHTML = 'Show Answer';
+        showAnswerButton.innerHTML = 'Zeige die Antwort';
     } else {
         answer.style.display = 'block';
-        showAnswerButton.innerHTML = 'Hide Answer';
+        showAnswerButton.innerHTML = 'Verstecke die Antwort';
     }
 }

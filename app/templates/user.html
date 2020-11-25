@@ -7,7 +7,7 @@
         <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
         <div class="profile-header">
             <h1> {{ user.username }} </h1>
-            <p>Member since {{ moment(user.member_since).format('L') }}.</p>
+            <p>Seit dem {{moment(user.member_since).format('Do MMMM YYYY') }} ein registrierter Benutzer</p>
         </div>
     </div>
     {% include '_flashcardcollections.html' %}
