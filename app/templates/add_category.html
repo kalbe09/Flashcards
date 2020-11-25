@@ -11,11 +11,17 @@
 
 {% block page_content %}
     <div class="page-header">
-        <h1>Füge eine neue Lektion hinzu</h1>
+        <h1>Neue Lektion für {{ name }} </h1>
     </div>
     <div class="col-md-4">
         <form method="post">
             {{ form.csrf_token }}
+            
+            {% for collection in collections %}
+            <p>jjj</p>
+            {% endfor %}
+
+            
             <div class="form-group">
                 {{ form.name.select }}
                 {{ form.name(size=60, class="form-control", placeholder="Lektion", id="category") }}

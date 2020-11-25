@@ -62,23 +62,23 @@ def add_collection():
         return redirect(url_for('.index'))
     return render_template('add_collection.html', form=form)
 
-@main.route('/add-category', methods=['GET', 'POST'])
+@main.route('/add-category/<int:id>/add-category', methods=['GET', 'POST'])
 @login_required
-def add_category():
+def add_category(id):
     form = FlashcardCategoryForm()
+    flashcardcollection = FlashcardCollection.query.get_or_404(id)
     if form.validate_on_submit():
-        category = Category.query.filter_by(name=form.name.data).first()
-        if category is None:
-            category = Category(name=form.name.data)
-        collection = FlashcardCollection(name=form.name.data)
-        collection.categories.append(category)
-        collection.user = current_user
-        db.session.add(collection)
+        category = Category(name=form.name.data)
+        flashcardcollection.categories.append(category)
+        db.session.add(flashcardcollection)
         db.session.commit()
         flash('Lektion hinzugefügt')
         return redirect(url_for('.index'))
-    return render_template('add_category.html', form=form)
-
+    return render_template('add_category.html', form=form, name=flashcardcollection.name)
+        
+        
+        
+       
 
 
 @main.route('/flashcardcollection/<int:id>/add-flashcard', methods=['GET', 'POST'])

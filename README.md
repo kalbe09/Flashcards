@@ -26,6 +26,8 @@ ALMS-Framework <br>
 * Seit dem 25th November 2020 ein registrierter Benutzer
   * Datum auf Deutsch ändern
 
+## Todos
+- Fehlermeldung bei doppelten Lektionen
 
 
 
