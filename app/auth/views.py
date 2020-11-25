@@ -77,7 +77,12 @@ def confirm(token):
 def resend_confirmation():
     token = current_user.generate_confirmation_token()
     send_email(current_user.email, 'Bestätige dein Account', 'auth/email/confirm', user=current_user, token=token)
-    flash('Eine neueBestätigunsmail wurde an deine Email-Adresse gesendet.')
+    
+    # ******************Muss wieder geändert werden************************************+
+    # flash('Eine neue Bestätigunsmail wurde an deine Email-Adresse gesendet.')
+    current_user.confirm(token)
+    # ******************Muss wieder geändert werden************************************+
+    
     return redirect(url_for('main.index'))
 
 
