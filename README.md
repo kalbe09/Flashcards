@@ -16,7 +16,7 @@ ALMS-Framework <br>
 
 
 ## Gewünschte Funktionen
-
+* Votesystem, um schlechte Karten auszusortieren
 
 
 ## Features
