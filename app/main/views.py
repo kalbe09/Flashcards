@@ -157,6 +157,8 @@ def reset_cards(id):
     for card in coll.flashcards.all():
         card.wrong_answered = False
         card.right_answered = False
+        card.sum_right_answered = 0
+        card.sum_wrong_answered = 0
     db.session.add(coll)
     db.session.commit()
     return redirect(url_for('.flashcardcollection', id=id))
@@ -177,6 +179,7 @@ def wrong_answer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
     flashcard.wrong_answered = True
     flashcard.right_answered = False
+    flashcard.sum_wrong_answered += 1
     db.session.add(flashcard)
     db.session.commit()
     return redirect(url_for('.learn', id=collId, mode=request.args.get('mode')))
@@ -188,6 +191,7 @@ def right_answer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
     flashcard.wrong_answered = False
     flashcard.right_answered = True
+    flashcard.sum_right_answered += 1
     db.session.add(flashcard)
     db.session.commit()
     return redirect(url_for('.learn', id=collId, mode=request.args.get('mode')))

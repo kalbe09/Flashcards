@@ -12,6 +12,8 @@ class Flashcard(db.Model):
     answer_html = db.Column(db.Text)
     right_answered = db.Column(db.Boolean, default=False)
     wrong_answered = db.Column(db.Boolean, default=False)
+    sum_right_answered = db.Column(db.Integer, default=0)
+    sum_wrong_answered = db.Column(db.Integer, default=0)
     collection_id = db.Column(db.Integer, db.ForeignKey('flashcardcollection.id'))
 
     @staticmethod

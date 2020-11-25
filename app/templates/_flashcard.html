@@ -6,6 +6,8 @@
                     <h3>
                         <a href="{{ url_for('.flashcard', collId=flashcardcollection.id, cardId=flashcard.id) }}">Karteikarte {{ loop.index }}</a>
                     </h3>
+                    <p class="label label-danger">{{ flashcard.sum_wrong_answered}} Falsche Antworten</p>
+                    <p class="label label-success">{{flashcard.sum_right_answered}} Richtige Antworten</p> <br>
                     <a href="{{ url_for('.delete_card', collId=flashcardcollection.id, cardId=flashcard.id) }}"><span class="label label-danger">Löschen</span></a>
                 </header>
                 <p class="flex-text">{{ flashcard.question[:20] }}...</p>
