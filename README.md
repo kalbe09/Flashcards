@@ -20,6 +20,10 @@ ALMS-Framework <br>
 * Votesystem, um schlechte Karten auszusortieren
 * Import / Export 
 * Online-Repository, um Änderungen in Echtzeit zu verfolgen
+* Editorleiste für einfachere Erstellung von KK
+* Erstellung: nächste Karte (immer nächste Karte)
+* Neue Kategorie erstellen
+
 
 
 
