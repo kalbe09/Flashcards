@@ -7,7 +7,7 @@ from ..models.flashcard_collections import FlashcardCollection
 from ..models.flashcard import Flashcard
 from . import main
 from .. import db
-from .forms import FlashcardCollectionForm, FlashcardForm, EditFlashcardForm
+from .forms import FlashcardCollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm
 from random import choice
 
 
@@ -56,6 +56,23 @@ def add_collection():
         flash('Fach hinzugefügt')
         return redirect(url_for('.index'))
     return render_template('add_collection.html', form=form)
+
+@main.route('/add-category', methods=['GET', 'POST'])
+@login_required
+def add_category():
+    form = FlashcardCategoryForm()
+    if form.validate_on_submit():
+        category = Category.query.filter_by(name=form.category.data).first()
+        if category is None:
+            category = Category(name=form.category.data)
+        collection = FlashcardCollection(name=form.name.data)
+        collection.categories.append(category)
+        collection.user = current_user
+        db.session.add(collection)
+        db.session.commit()
+        flash('Lektion hinzugefügt')
+        return redirect(url_for('.index'))
+    return render_template('add_category.html', form=form)
 
 
 @main.route('/get-category', methods=['GET', 'POST'])
@@ -157,8 +174,8 @@ def reset_cards(id):
     for card in coll.flashcards.all():
         card.wrong_answered = False
         card.right_answered = False
-        card.sum_right_answered = 0
-        card.sum_wrong_answered = 0
+        #card.sum_right_answered = 0
+        #card.sum_wrong_answered = 0
     db.session.add(coll)
     db.session.commit()
     return redirect(url_for('.flashcardcollection', id=id))

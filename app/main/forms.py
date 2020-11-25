@@ -9,6 +9,10 @@ class FlashcardCollectionForm(FlaskForm):
     category = StringField('Lektion', validators=[DataRequired()])
     submit = SubmitField('Hinzufügen')
 
+class FlashcardCategoryForm(FlaskForm):
+    category = StringField('Lektion', validators=[DataRequired()])
+    submit = SubmitField('Hinzufügen')
+
 
 class FlashcardForm(FlaskForm):
     question = PageDownField('Frage', validators=[DataRequired()])
