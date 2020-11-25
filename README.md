@@ -22,7 +22,9 @@ ALMS-Framework <br>
 * Online-Repository, um Änderungen in Echtzeit zu verfolgen
 * Editorleiste für einfachere Erstellung von KK
 * Erstellung: nächste Karte (immer nächste Karte)
-* Neue Kategorie erstellen
+* Neue Lektion erstellen
+* Seit dem 25th November 2020 ein registrierter Benutzer
+  * Datum auf Deutsch ändern
 
 
 
