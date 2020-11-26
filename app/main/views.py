@@ -9,6 +9,7 @@ from . import main
 from .. import db
 from .forms import FlashcardCollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm
 from random import choice
+import datetime
 
 
 @main.after_app_request
@@ -49,31 +50,56 @@ def user(username):
 @login_required
 def add_collection():
     form = FlashcardCollectionForm()
+
+    # After pressing the button
     if form.validate_on_submit():
+        
+        # Save Category ?????
         category = Category.query.filter_by(name=form.category.data).first()
         if category is None:
             category = Category(name=form.category.data)
+        
+        # Add attributes to the new collection
         collection = FlashcardCollection(name=form.name.data)
         collection.categories.append(category)
         collection.user = current_user
+        
+        # update database
         db.session.add(collection)
         db.session.commit()
+        
+        # Short notice and redirection to home
         flash('Fach hinzugefügt')
         return redirect(url_for('.index'))
+    # for the template add_collection.html
     return render_template('add_collection.html', form=form)
+
+
+
 
 @main.route('/add-category/<int:id>/add-category', methods=['GET', 'POST'])
 @login_required
 def add_category(id):
     form = FlashcardCategoryForm()
+    
+    # Determine the current collection
     flashcardcollection = FlashcardCollection.query.get_or_404(id)
+
+    # After pressing the button
     if form.validate_on_submit():
+        
+        # create new category and put it in the list of his collection
         category = Category(name=form.name.data)
         flashcardcollection.categories.append(category)
+        
+        # update database
         db.session.add(flashcardcollection)
         db.session.commit()
+        
+        # Short notice and redirection to home
         flash('Lektion hinzugefügt')
         return redirect(url_for('.flashcardcollection', id=flashcardcollection.id))
+    # for the template add_category.html
     return render_template('add_category.html', form=form, name=flashcardcollection.name)
         
         
@@ -85,20 +111,35 @@ def add_category(id):
 @login_required
 def add_flashcard(id):
     form = FlashcardForm()
-    flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    
+    # Determine the current collection and category
+    collection = FlashcardCollection.query.get_or_404(id)
+    category = FlashcardCollection.query.get_or_404(id)
+
+    # After pressing the button
     if form.validate_on_submit():
+
+        # Add attributes to the new collection
+# elegantere Lösung??????
         card = Flashcard(question=form.question.data, 
             answer=form.answer.data,
-            category_id=id)
-        flashcardcollection.flashcards.append(card)
-        db.session.add(flashcardcollection)
+            category_id=id, collection_id = collection.name)
+
+
+        collection.flashcards.append(card)
+        category.flashcards.append(card)
+
+        # update database
+        db.session.add(collection)
         db.session.commit()
-        flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(flashcardcollection.name))
-        if form.next.data:
-            return redirect(url_for('.add_flashcard', id=flashcardcollection.id))
-        else:
-            return redirect(url_for('.flashcardcollection', id=flashcardcollection.id))
-    return render_template('add_flashcard.html', form=form, name=flashcardcollection.name)
+        
+        
+        # Short notice and redirection to home
+        flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(collection.name))        
+        return redirect(url_for('.add_flashcard', id=collection.id))
+    
+    # for the template add_flashcard.html
+    return render_template('add_flashcard.html', form=form, name=collection.name)
 
 # *********************************************************************************************************************
 # Get 
@@ -226,6 +267,15 @@ def reset_cards(id):
 
 
 
+
+
+
+
+
+
+
+
+
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/wrong')
 @login_required
 def wrong_answer(collId, cardId):
@@ -233,8 +283,19 @@ def wrong_answer(collId, cardId):
     flashcard.wrong_answered = True
     flashcard.right_answered = False
     flashcard.sum_wrong_answered += 1
+    flashcard.quote = flashcard.sum_wrong_answered/flashcard.sum_right_answered
+
+# Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
+    flashcard.phase = 0
+    
+    flashcard.lastdate = datetime.datetime.now().strftime("%d.%m.%Y")
+# flashcard.nextdate = phase * faktor
+    
+    # database update    
     db.session.add(flashcard)
     db.session.commit()
+    
+    # next card
     return redirect(url_for('.learn', id=collId, mode=request.args.get('mode')))
 
 
@@ -245,6 +306,15 @@ def right_answer(collId, cardId):
     flashcard.wrong_answered = False
     flashcard.right_answered = True
     flashcard.sum_right_answered += 1
+
+    flashcard.phase += 1
+
+    flashcard.lastdate = datetime.datetime.now().strftime("%d.%m.%Y")
+# flashcard.nextdate = phase * faktor
+
+    # database update
     db.session.add(flashcard)
     db.session.commit()
+    
+    # next card
     return redirect(url_for('.learn', id=collId, mode=request.args.get('mode')))
