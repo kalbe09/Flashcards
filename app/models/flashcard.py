@@ -1,6 +1,8 @@
 from .. import db
 from markdown import markdown
 import bleach
+import datetime
+
 
 
 class Flashcard(db.Model):
@@ -14,7 +16,12 @@ class Flashcard(db.Model):
     wrong_answered = db.Column(db.Boolean, default=False)
     sum_right_answered = db.Column(db.Integer, default=0)
     sum_wrong_answered = db.Column(db.Integer, default=0)
+    quote = db.Column(db.Float, default=0)
+    phase = db.Column(db.Integer, default=0)
+    nextdate = db.Column(db.Text, default=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d.%m.%Y"))
+    lastdate = db.Column(db.Text, default=datetime.datetime.now().strftime("%d.%m.%Y"))
     collection_id = db.Column(db.Integer, db.ForeignKey('flashcardcollection.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
 
     @staticmethod
     def on_changed_question(target, value, oldvalue, initiator):

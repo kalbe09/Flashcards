@@ -30,9 +30,16 @@ ALMS-Framework <br>
 - Fehlermeldung bei doppelten Lektionen
 - Gui: Lektion anklicken und danach filtern
 - Wahr/Falsch Button anders platzieren
-i- Fehlerquote
+- Fehlerquote
 - Mathematische Formeln
 - Votesystem (Anzahl User zählen * 90% dann delete)
+- Import/export
+- Einstellbare Frist (Klausurtermin)
+- karten
+  - letzte Abfrage
+  - phase
+  - nächste Abfrage
+
 
 
 

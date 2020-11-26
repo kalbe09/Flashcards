@@ -5,9 +5,24 @@
 {% block page_content %}
     <div class="page-header">
         <h1> {{ flashcardcollection.name }} </h1>
-        {% for category in flashcardcollection.categories %}
-            <span class="label label-primary">{{ category.name }}</span>
-        {% endfor %}
+
+        
+        
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Wähle eine Lektion
+            <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              {% for category in flashcardcollection.categories%}
+              <li><a href="{{ url_for('.flashcardcollection', id=flashcardcollection.id, catid=category.name) }}">{{ category.name }}</a></li>
+              {% endfor %}
+            </ul>
+          </div> 
+        
+        
+
+        
+        
+      
         <br>
         <br>
         <a href="{{ url_for('.add_category', id=flashcardcollection.id) }}">

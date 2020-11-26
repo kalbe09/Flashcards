@@ -50,9 +50,9 @@ def user(username):
 def add_collection():
     form = FlashcardCollectionForm()
     if form.validate_on_submit():
-        category = Category.query.filter_by(name=form.name.data).first()
+        category = Category.query.filter_by(name=form.category.data).first()
         if category is None:
-            category = Category(name=form.name.data)
+            category = Category(name=form.category.data)
         collection = FlashcardCollection(name=form.name.data)
         collection.categories.append(category)
         collection.user = current_user
@@ -73,7 +73,7 @@ def add_category(id):
         db.session.add(flashcardcollection)
         db.session.commit()
         flash('Lektion hinzugefügt')
-        return redirect(url_for('.index'))
+        return redirect(url_for('.flashcardcollection', id=flashcardcollection.id))
     return render_template('add_category.html', form=form, name=flashcardcollection.name)
         
         
@@ -87,7 +87,9 @@ def add_flashcard(id):
     form = FlashcardForm()
     flashcardcollection = FlashcardCollection.query.get_or_404(id)
     if form.validate_on_submit():
-        card = Flashcard(question=form.question.data, answer=form.answer.data)
+        card = Flashcard(question=form.question.data, 
+            answer=form.answer.data,
+            category_id=id)
         flashcardcollection.flashcards.append(card)
         db.session.add(flashcardcollection)
         db.session.commit()
@@ -110,10 +112,18 @@ def get_category():
     })
 
 
-@main.route('/flashcardcollection/<int:id>')
+
+@main.route('/flashcardcollection/<int:id>/')
 @login_required
 def flashcardcollection(id):
     flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    catid = request.args.get('catid')
+    if catid != 'Null':
+        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
+    elif catid == 'wrong_ones':
+        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
+    else:
+        abort(404)
     return render_template('flashcardcollection.html', flashcardcollection=flashcardcollection)
 
 @main.route('/flashcardcategory/<int:id>')
