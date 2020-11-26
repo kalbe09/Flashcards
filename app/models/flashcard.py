@@ -8,21 +8,33 @@ import datetime
 class Flashcard(db.Model):
     __tablename__ = 'flashcard'
     id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    collection_id = db.Column(db.Integer, db.ForeignKey('flashcardcollection.id'))    
+    phase = db.Column(db.Integer, db.ForeignKey('phase.id'))    
+
+
+    dateBeginn = db.Column(db.Text, default=datetime.datetime.now().strftime("%d.%m.%Y"))
+    lastdate = db.Column(db.Text, default=datetime.datetime.now().strftime("%d.%m.%Y"))
+    nextdate = db.Column(db.Text, default=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d.%m.%Y"))
+        
     question = db.Column(db.Text)
     question_html = db.Column(db.Text)
     answer = db.Column(db.Text)
     answer_html = db.Column(db.Text)
+    
     right_answered = db.Column(db.Boolean, default=False)
     wrong_answered = db.Column(db.Boolean, default=False)
     sum_right_answered = db.Column(db.Integer, default=0)
     sum_wrong_answered = db.Column(db.Integer, default=0)
     quote = db.Column(db.Float, default=0)
-    phase = db.Column(db.Integer, default=0)
-    nextdate = db.Column(db.Text, default=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%d.%m.%Y"))
-    lastdate = db.Column(db.Text, default=datetime.datetime.now().strftime("%d.%m.%Y"))
-    collection_id = db.Column(db.Integer, db.ForeignKey('flashcardcollection.id'))
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    
+    vote_bad = db.Column(db.Integer, default=0)
+    vote_good = db.Column(db.Integer, default=0)
 
+    userid = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
+    
     @staticmethod
     def on_changed_question(target, value, oldvalue, initiator):
         allowed_tags = ['abbr', 'acronym', 'b', 'blockquote', 'code', 'i',
