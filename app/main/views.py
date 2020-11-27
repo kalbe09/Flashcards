@@ -9,6 +9,7 @@ from . import main
 from .. import db
 from .forms import FlashcardCollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm
 from random import choice
+import datetime
 
 
 @main.after_app_request
