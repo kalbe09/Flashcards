@@ -23,12 +23,16 @@ class Flashcard(db.Model):
     collection_id = db.Column(db.Integer, db.ForeignKey('flashcardcollection.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
 
+
+    # Whitelist for allowed tags
     @staticmethod
     def on_changed_question(target, value, oldvalue, initiator):
         allowed_tags = ['abbr', 'acronym', 'b', 'blockquote', 'code', 'i',
                         'li', 'ol', 'strong', 'ul', 'h1', 'h2', 'h3', 'p']
         target.question_html = bleach.clean(markdown(value, output_format='html'), tags=allowed_tags, strip=True)
 
+
+    # Whitelist for allowed tags
     @staticmethod
     def on_changed_answer(target, value, oldvalue, initiator):
         allowed_tags = ['abbr', 'acronym', 'b', 'blockquote', 'code', 'i',
