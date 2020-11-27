@@ -9,6 +9,11 @@ class FlashcardCollection(db.Model):
     name = db.Column(db.String(64), index=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
+    finaldate = db.Column(db.Text)
+    prio = db.Column(db.Integer, default=0)
+    activ = db.Column(db.Boolean, default=True)
+    
     flashcards = db.relationship('Flashcard', backref='collection', lazy='dynamic')
     categories = db.relationship('Category',
                                  secondary=has_category,
