@@ -125,6 +125,13 @@ div.flask-pagedown-preview h3 {
     display: none;
 }
 
+.floatright{
+    float:right;
+}
+.fa{
+    margin-right: 5px
+}
+
 .btn-answer, .choiseBtn, .btn-learn{
     margin-bottom: 15px;
     margin-top: 15px;

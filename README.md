@@ -27,8 +27,8 @@ ALMS-Framework <br>
   * Datum auf Deutsch ändern
 
 ## Todos
+
 - Gui: Lektion anklicken und danach filtern
-- Wahr/Falsch Button anders platzieren
 - Fehlerquote
 - Mathematische Formeln
 - Votesystem (Anzahl User zählen * 90% dann delete)
@@ -38,20 +38,23 @@ ALMS-Framework <br>
   - letzte Abfrage
   - phase
   - nächste Abfrage
+- Löschen der Auswahlbox nächste Karte
 
-
-
+## Erledigt
+- Wahr/Falsch Button anders platzieren
+- doppelten Lektionen möglich
+- direkte Eingabe einer nächsten Karte
 
 ## Funkionen
 You can 
-* Registrierung eines User Accounts
-* Erstellung eigener Themengebiete  
-* Erstellung verschiedener Lektionen
-* Erstellung von Karteikarten in den Themengebieten
-* Abfrage der Karteikarten
-* Angabe von Richtig oder Falsch
-* Nur die falschen Karteikarten lernen
-* Markdown Text für die Erstellung und Bearbeitung
+- Registrierung eines User Accounts
+- Erstellung eigener Themengebiete  
+- Erstellung verschiedener Lektionen
+- Erstellung von Karteikarten in den Themengebieten
+- Abfrage der Karteikarten
+- Angabe von Richtig oder Falsch
+- Nur die falschen Karteikarten lernen
+- Markdown Text für die Erstellung und Bearbeitung
 
 
 ## Installation

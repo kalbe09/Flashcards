@@ -17,7 +17,7 @@ class FlashcardCategoryForm(FlaskForm):
 class FlashcardForm(FlaskForm):
     question = PageDownField('Frage', validators=[DataRequired()])
     answer = PageDownField('Antwort', validators=[DataRequired()])
-    next = BooleanField('Nächste Karte?')
+    #next = BooleanField('Nächste Karte?')
     submit = SubmitField('Hinzufügen')
 
 

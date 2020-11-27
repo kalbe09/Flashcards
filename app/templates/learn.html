@@ -3,9 +3,18 @@
 {% block title %}Flashcard - Learning Collection {{ name }}{% endblock %}
 
 {% block page_content %}
+    <div class="row-12 choiseBtn floatright">
+        <div class="col-xs-5 col-md-5">
+            <button class="btn btn-success"><i class="fa fa-thumbs-up"></i>Vote up</button>
+        </div>
+        <div class="col-xs-5 col-md-5">
+            <button class="btn btn-danger"><i class="fa fa-thumbs-down"></i>Vote down</button>
+        </div>
+    </div>
     <div class="page-header">
         <h1> Lernbereich von {{ collection.name }} </h1>
     </div>
+
     <div>
         <h2>Frage:</h2>
         <div class="flashcard-body">
@@ -30,16 +39,19 @@
                 <p>{{ flashcard.answer }}</p>
             {% endif %}
         </div>
-        <div class="row choiseBtn">
-            <div class="col-xs-6 col-md-4">
+
+        
+        <div class="row-12 choiseBtn floatright">
+            <div class="col-xs-5 col-md-5">
                 <a href="{{ url_for('.wrong_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"> <span
-                        class="btn btn-danger">Falsch</span></a>
+                        class="btn btn-danger"><i class="fa fa-frown-o"></i>Falsch</span></a>
             </div>
-            <div class="col-xs-6 col-md-4 col-md-offset-4">
+            <div class="col-xs-5 col-md-5">
                 <a href="{{ url_for('.right_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
-                        class="btn btn-success">Richtig</span></a>
+                        class="btn btn-success"><i class="fa fa-smile-o"></i>Richtig</span></a>
             </div>
         </div>
+        
     </div>
 {% endblock %}
 
