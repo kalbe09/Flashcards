@@ -27,7 +27,6 @@ ALMS-Framework <br>
   * Datum auf Deutsch ändern
 
 ## Todos
-- Fehlermeldung bei doppelten Lektionen
 - Gui: Lektion anklicken und danach filtern
 - Wahr/Falsch Button anders platzieren
 - Fehlerquote
