@@ -49,26 +49,27 @@ def user(username):
 @login_required
 def add_collection():
     form = FlashcardCollectionForm()
-
+    
     # After pressing the button
     if form.validate_on_submit():
-        
-        # Save Category ?????
+
+         # Save Category ?????
         category = Category.query.filter_by(name=form.category.data).first()
         if category is None:
             category = Category(name=form.category.data)
         
-        # Add attributes to the new collection
+         # Add attributes to the new collection
         collection = FlashcardCollection(name=form.name.data)
         collection.categories.append(category)
         collection.user = current_user
-        
+
         # update database
         db.session.add(collection)
         db.session.commit()
-        
+
         # Short notice and redirection to home
         flash('Fach hinzugefügt')
+
         return redirect(url_for('.index'))
     # for the template add_collection.html
     return render_template('add_collection.html', form=form)
