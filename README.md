@@ -39,6 +39,7 @@ ALMS-Framework <br>
   - letzte Abfrage
   - phase
   - nächste Abfrage
+- Eingabevalidierung mit Whitelisting
 
 
 

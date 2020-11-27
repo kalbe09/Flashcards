@@ -7,6 +7,9 @@ class FlashcardCollection(db.Model):
     __tablename__ = 'flashcardcollection'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
     finaldate = db.Column(db.Text)
     prio = db.Column(db.Integer, default=0)
     activ = db.Column(db.Boolean, default=True)

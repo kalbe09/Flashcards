@@ -286,7 +286,7 @@ def wrong_answer(collId, cardId):
     flashcard.quote = flashcard.sum_wrong_answered/flashcard.sum_right_answered
 
 # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
-    flashcard.phase = 0
+# flashcard.phase = 0
     
     flashcard.lastdate = datetime.datetime.now().strftime("%d.%m.%Y")
 # flashcard.nextdate = phase * faktor
@@ -307,7 +307,7 @@ def right_answer(collId, cardId):
     flashcard.right_answered = True
     flashcard.sum_right_answered += 1
 
-    flashcard.phase += 1
+# flashcard.phase += 1
 
     flashcard.lastdate = datetime.datetime.now().strftime("%d.%m.%Y")
 # flashcard.nextdate = phase * faktor

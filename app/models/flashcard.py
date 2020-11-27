@@ -10,7 +10,7 @@ class Flashcard(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     collection_id = db.Column(db.Integer, db.ForeignKey('flashcardcollection.id'))    
-    phase = db.Column(db.Integer, db.ForeignKey('phase.id'))    
+#    phase = db.Column(db.Integer, db.ForeignKey('phasen.id'))    
 
 
     dateBeginn = db.Column(db.Text, default=datetime.datetime.now().strftime("%d.%m.%Y"))
@@ -31,16 +31,18 @@ class Flashcard(db.Model):
     vote_bad = db.Column(db.Integer, default=0)
     vote_good = db.Column(db.Integer, default=0)
 
-    userid = db.Column(db.Integer, db.ForeignKey('user.id'))
+    userid = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
-    
+    # Whitelist for allowed tags
     @staticmethod
     def on_changed_question(target, value, oldvalue, initiator):
         allowed_tags = ['abbr', 'acronym', 'b', 'blockquote', 'code', 'i',
                         'li', 'ol', 'strong', 'ul', 'h1', 'h2', 'h3', 'p']
         target.question_html = bleach.clean(markdown(value, output_format='html'), tags=allowed_tags, strip=True)
 
+
+    # Whitelist for allowed tags
     @staticmethod
     def on_changed_answer(target, value, oldvalue, initiator):
         allowed_tags = ['abbr', 'acronym', 'b', 'blockquote', 'code', 'i',
