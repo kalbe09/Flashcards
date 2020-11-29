@@ -62,7 +62,7 @@ def add_collection():
             category = Category(name=form.category.data, duedate=form.duedate.data)
         
          # Add attributes to the new collection
-        collection = FlashcardCollection(name=form.name.data)
+        collection = FlashcardCollection(name=form.name.data, duedate=form.duedate.data, prio=form.prio.data)
         collection.categories.append(category)
         collection.user = current_user
 
@@ -91,7 +91,7 @@ def add_category(id):
     if form.validate_on_submit():
         
         # create new category and put it in the list of his collection
-        category = Category(name=form.name.data, duedate=form.duedate.data)
+        category = Category(name=form.name.data, duedate=form.duedate.data, prio=form.prio.data)
         flashcardcollection.categories.append(category)
         
         # update database
@@ -144,9 +144,11 @@ def add_flashcard(id):
     return render_template('add_flashcard.html', form=form, name=collection.name)
 
 # *********************************************************************************************************************
-# Get 
+# Get Category
 # *********************************************************************************************************************
 
+
+# Categories filtered by names ****************************************************************************************
 @main.route('/get-category', methods=['GET', 'POST'])
 @login_required
 def get_category():
@@ -156,10 +158,12 @@ def get_category():
 
 
 
+# Flashcards for collection id ***************************************************************************************
 @main.route('/flashcardcollection/<int:id>/')
 @login_required
 def flashcardcollection(id):
     flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    
     catid = request.args.get('catid')
     if catid != 'Null':
         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
@@ -169,6 +173,24 @@ def flashcardcollection(id):
         abort(404)
     return render_template('flashcardcollection.html', flashcardcollection=flashcardcollection)
 
+# Flashcards for collection colid and category catid **************************************************************
+# @main.route('/flashcardcollection/<int:colid>/category/<int:catid>')
+# @login_required
+# def getcards_colid_catid(colid, catid):
+#     #collection = FlashcardCollection.query.get_or_404(colid)
+#     category = Category.query.get_or_404(catid)
+#     flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
+#     #catid = request.args.get('catid')
+#     if catid != 'Null':
+#         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
+#     elif catid == 'wrong_ones':
+#         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
+#     else:
+#         abort(404)
+#     return render_template('flashcardcollection.html', flashcardcollection=flashcardcollection)
+
+
+# Categories for collection id**********************************************************************************
 @main.route('/flashcardcategory/<int:id>')
 @login_required
 def flashcardcategory(collId, catid):
@@ -176,6 +198,8 @@ def flashcardcategory(collId, catid):
     category = flashcardcollection.categories.filter_by(id=catid).first()
     return render_template('flashcardcategory.html', flashcardcollection=flashcardcollection, Category=category)
 
+
+# Single flashcard for collection id ****************************************************************************************
 @main.route('/flashcardcollection/<int:collId>/flashcard/<int:cardId>')
 @login_required
 def flashcard(collId, cardId):
