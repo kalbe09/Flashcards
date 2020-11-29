@@ -59,7 +59,7 @@ def add_collection():
          # Save Category ?????
         category = Category.query.filter_by(name=form.category.data).first()
         if category is None:
-            category = Category(name=form.category.data)
+            category = Category(name=form.category.data, duedate=form.duedate.data)
         
          # Add attributes to the new collection
         collection = FlashcardCollection(name=form.name.data)
@@ -91,7 +91,7 @@ def add_category(id):
     if form.validate_on_submit():
         
         # create new category and put it in the list of his collection
-        category = Category(name=form.name.data)
+        category = Category(name=form.name.data, duedate=form.duedate.data)
         flashcardcollection.categories.append(category)
         
         # update database

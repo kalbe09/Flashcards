@@ -27,7 +27,8 @@ ALMS-Framework <br>
   * Datum auf Deutsch ändern
 
 ## Todos
-
+- Categorie und Forms: Text to Datefield
+- Fach hinzufügen: Fälligkeit
 - Gui: Lektion anklicken und danach filtern
 - Fehlerquote
 - Mathematische Formeln
@@ -44,6 +45,8 @@ ALMS-Framework <br>
 - Wahr/Falsch Button anders platzieren
 - doppelten Lektionen möglich
 - direkte Eingabe einer nächsten Karte
+- Wahr/Falsch Button anders platzieren
+
 
 ## Fragen
 - Quellen zu flask tutorial etc.? 
@@ -51,7 +54,6 @@ ALMS-Framework <br>
 
 
 ## Erledigt 
-- Wahr/Falsch Button anders platzieren
 
 
 ## Funkionen
