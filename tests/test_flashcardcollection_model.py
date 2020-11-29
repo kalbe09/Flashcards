@@ -1,11 +1,11 @@
 import unittest
 from app import create_app, db
-from app.models.flashcard_collections import FlashcardCollection
+from app.models.flashcard_collections import Collection
 from app.models.flashcard import Flashcard
 from app.models.category import Category
 
 
-class FlashcardCollectionTestCase(unittest.TestCase):
+class CollectionTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app('testing')
         self.app_context = self.app.app_context()
@@ -18,7 +18,7 @@ class FlashcardCollectionTestCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_add_category(self):
-        f = FlashcardCollection(name='Testcollection')
+        f = Collection(name='Testcollection')
         c = Category(name='Test')
         f.categories.append(c)
         self.assertTrue(f.categories.count() == 1)
@@ -27,7 +27,7 @@ class FlashcardCollectionTestCase(unittest.TestCase):
         self.assertTrue(f.categories.count() == 2)
 
     def test_wrong_answered_flashcards(self):
-        f = FlashcardCollection(name='Testcollection')
+        f = Collection(name='Testcollection')
         for x in range(20):
             c = Flashcard(question="Question{0}".format(x), answer="Answer{0}".format(x))
             if x % 2 == 0:

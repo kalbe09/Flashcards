@@ -3,11 +3,11 @@ from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from ..models.users import User
 from ..models.category import Category
-from ..models.flashcard_collections import FlashcardCollection
+from ..models.flashcard_collections import Collection
 from ..models.flashcard import Flashcard
 from . import main
 from .. import db
-from .forms import FlashcardCollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm
+from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm
 from random import choice
 import datetime
 
@@ -25,7 +25,7 @@ def after_request(response):
 @main.route('/')
 def index():
     if current_user.is_authenticated:
-        collections = current_user.collections.order_by(FlashcardCollection.timestamp.desc()).all()
+        collections = current_user.collections.order_by(Collection.timestamp.desc()).all()
     else:
         collections = []
     return render_template('index.html', collections=collections)
@@ -37,7 +37,7 @@ def user(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         abort(404)
-    collections = current_user.collections.order_by(FlashcardCollection.timestamp.desc()).all()
+    collections = current_user.collections.order_by(Collection.timestamp.desc()).all()
     return render_template('user.html', user=user, collections=collections)
 
 
@@ -51,7 +51,7 @@ def user(username):
 @main.route('/add-collection', methods=['GET', 'POST'])
 @login_required
 def add_collection():
-    form = FlashcardCollectionForm()
+    form = CollectionForm()
     
     # After pressing the button
     if form.validate_on_submit():
@@ -62,7 +62,7 @@ def add_collection():
             category = Category(name=form.category.data, duedate=form.duedate.data)
         
          # Add attributes to the new collection
-        collection = FlashcardCollection(name=form.name.data, duedate=form.duedate.data, prio=form.prio.data)
+        collection = Collection(name=form.name.data, duedate=form.duedate.data, prio=form.prio.data)
         collection.categories.append(category)
         collection.user = current_user
 
@@ -85,7 +85,7 @@ def add_category(id):
     form = FlashcardCategoryForm()
     
     # Determine the current collection
-    flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    flashcardcollection = Collection.query.get_or_404(id)
 
     # After pressing the button
     if form.validate_on_submit():
@@ -115,8 +115,8 @@ def add_flashcard(id):
     form = FlashcardForm()
     
     # Determine the current collection and category
-    collection = FlashcardCollection.query.get_or_404(id)
-    category = FlashcardCollection.query.get_or_404(id)
+    collection = Collection.query.get_or_404(id)
+    category = Collection.query.get_or_404(id)
 
     # After pressing the button
     if form.validate_on_submit():
@@ -162,7 +162,7 @@ def get_category():
 @main.route('/flashcardcollection/<int:id>/')
 @login_required
 def flashcardcollection(id):
-    flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    flashcardcollection = Collection.query.get_or_404(id)
     
     catid = request.args.get('catid')
     if catid != 'Null':
@@ -177,7 +177,7 @@ def flashcardcollection(id):
 # @main.route('/flashcardcollection/<int:colid>/category/<int:catid>')
 # @login_required
 # def getcards_colid_catid(colid, catid):
-#     #collection = FlashcardCollection.query.get_or_404(colid)
+#     #collection = Collection.query.get_or_404(colid)
 #     category = Category.query.get_or_404(catid)
 #     flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
 #     #catid = request.args.get('catid')
@@ -194,7 +194,7 @@ def flashcardcollection(id):
 @main.route('/flashcardcategory/<int:id>')
 @login_required
 def flashcardcategory(collId, catid):
-    flashcardcollection = FlashcardCollection.query.get_or_404(collId)
+    flashcardcollection = Collection.query.get_or_404(collId)
     category = flashcardcollection.categories.filter_by(id=catid).first()
     return render_template('flashcardcategory.html', flashcardcollection=flashcardcollection, Category=category)
 
@@ -203,7 +203,7 @@ def flashcardcategory(collId, catid):
 @main.route('/flashcardcollection/<int:collId>/flashcard/<int:cardId>')
 @login_required
 def flashcard(collId, cardId):
-    flashcardcollection = FlashcardCollection.query.get_or_404(collId)
+    flashcardcollection = Collection.query.get_or_404(collId)
     flashcard = flashcardcollection.flashcards.filter_by(id=cardId).first()
     if flashcard is None:
         abort(404)
@@ -216,7 +216,7 @@ def flashcard(collId, cardId):
 @main.route('/flashcardcollection/<int:id>/delete')
 @login_required
 def delete_flashcardcollection(id):
-    flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    flashcardcollection = Collection.query.get_or_404(id)
     db.session.delete(flashcardcollection)
     db.session.commit()
     flash('Fach {0} wurde gelöscht'.format(flashcardcollection.name))
@@ -238,7 +238,7 @@ def delete_card(collId, cardId):
 @login_required
 def edit_flashcard(collId, cardId):
     form = EditFlashcardForm()
-    flashcardcollection = FlashcardCollection.query.get_or_404(collId)
+    flashcardcollection = Collection.query.get_or_404(collId)
     flashcard = flashcardcollection.flashcards.filter_by(id=cardId).first()
     if flashcard is None:
         abort(404)
@@ -262,7 +262,7 @@ def edit_flashcard(collId, cardId):
 @main.route('/flashcardcollection/<int:id>/learn')
 @login_required
 def learn(id):
-    flashcardcollection = FlashcardCollection.query.get_or_404(id)
+    flashcardcollection = Collection.query.get_or_404(id)
     mode = request.args.get('mode')
     if mode == 'normal':
         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
@@ -281,7 +281,7 @@ def learn(id):
 @main.route('/flashcardcollection/<int:id>/reset-cards')
 @login_required
 def reset_cards(id):
-    coll = FlashcardCollection.query.get_or_404(id)
+    coll = Collection.query.get_or_404(id)
     for card in coll.flashcards.all():
         card.wrong_answered = False
         card.right_answered = False

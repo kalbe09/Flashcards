@@ -9,7 +9,7 @@ if os.path.exists('.env'):
 
 from app import create_app, db
 from app.models.users import User
-from app.models.flashcard_collections import FlashcardCollection
+from app.models.flashcard_collections import Collection
 from app.models.category import Category
 from app.models.flashcard import Flashcard
 from flask_script import Manager, Shell
@@ -21,7 +21,7 @@ migrate = Migrate(app, db)
 
 
 def make_shell_context():
-    return dict(app=app, db=db, User=User, FlashcardCollection=FlashcardCollection, \
+    return dict(app=app, db=db, User=User, Collection=Collection, \
                 Category=Category, Flashcard=Flashcard)
 
 

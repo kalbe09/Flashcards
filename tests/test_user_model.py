@@ -2,7 +2,7 @@ import unittest
 import time
 from datetime import datetime
 from app import create_app, db
-from app.models.flashcard_collections import FlashcardCollection
+from app.models.flashcard_collections import Collection
 from app.models.users import User
 
 

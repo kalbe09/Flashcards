@@ -4,7 +4,7 @@ from wtforms import StringField, SubmitField, BooleanField, DateField, IntegerFi
 from wtforms.validators import DataRequired, Optional
 
 
-class FlashcardCollectionForm(FlaskForm):
+class CollectionForm(FlaskForm):
     name = StringField('Name*', validators=[DataRequired()])
     category = StringField('Lektion*', validators=[DataRequired()])
     duedate = DateField('Fälligkeit', format='%d.%m.%Y', validators=[Optional()])
