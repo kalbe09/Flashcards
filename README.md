@@ -41,6 +41,8 @@ ALMS-Framework <br>
   - nächste Abfrage
 
 
+# Fragen
+- Quellen zu flask tutorial etc.? 
 
 
 ## Funkionen
