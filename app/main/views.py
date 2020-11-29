@@ -171,23 +171,23 @@ def flashcardcollection(id):
         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
     else:
         abort(404)
-    return render_template('flashcardcollection.html', flashcardcollection=flashcardcollection)
+    return render_template('single_collection.html', flashcardcollection=flashcardcollection)
 
 # Flashcards for collection colid and category catid **************************************************************
-# @main.route('/flashcardcollection/<int:colid>/category/<int:catid>')
-# @login_required
-# def getcards_colid_catid(colid, catid):
-#     #collection = Collection.query.get_or_404(colid)
-#     category = Category.query.get_or_404(catid)
-#     flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
-#     #catid = request.args.get('catid')
-#     if catid != 'Null':
-#         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
-#     elif catid == 'wrong_ones':
-#         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
-#     else:
-#         abort(404)
-#     return render_template('flashcardcollection.html', flashcardcollection=flashcardcollection)
+@main.route('/category/<int:catid>')
+@login_required
+def getcards_catid(catid):
+    category = Category.query.get_or_404(catid)
+    flashcards = category.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
+
+    #catid = request.args.get('catid')
+    if catid != 'Null':
+        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
+    elif catid == 'wrong_ones':
+        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
+    else:
+        abort(404)
+    return render_template('single_collection.html', flashcardcollection=flashcardcollection)
 
 
 # Categories for collection id**********************************************************************************

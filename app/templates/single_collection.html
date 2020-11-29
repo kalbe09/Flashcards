@@ -17,11 +17,6 @@
               {% endfor %}
             </ul>
           </div> 
-        
-        
-
-        
-        
       
         <br>
         <br>
@@ -41,6 +36,6 @@
             class="btn btn-danger btn-learn">Falsche lernen</span></a>
     <a href="{{ url_for('.reset_cards', id=flashcardcollection.id) }}"><span
             class="btn btn-warning btn-learn">Lernstand zurücksetzen</span></a>
-    {% include "_flashcard.html" %}
+    {% include "flashcard_box.html" %}
 
 {% endblock %}
