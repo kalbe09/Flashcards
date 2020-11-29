@@ -29,7 +29,6 @@ ALMS-Framework <br>
 ## Todos
 - Fehlermeldung bei doppelten Lektionen
 - Gui: Lektion anklicken und danach filtern
-- Wahr/Falsch Button anders platzieren
 - Fehlerquote
 - Mathematische Formeln
 - Votesystem (Anzahl User zählen * 90% dann delete)
@@ -41,8 +40,13 @@ ALMS-Framework <br>
   - nächste Abfrage
 
 
-# Fragen
+## Fragen
 - Quellen zu flask tutorial etc.? 
+
+
+
+## Erledigt 
+- Wahr/Falsch Button anders platzieren
 
 
 ## Funkionen
