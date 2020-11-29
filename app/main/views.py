@@ -55,7 +55,7 @@ def add_collection():
     
     # After pressing the button
     if form.validate_on_submit():
-
+        
          # Save Category ?????
         category = Category.query.filter_by(name=form.category.data).first()
         if category is None:
