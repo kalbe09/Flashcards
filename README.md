@@ -27,8 +27,9 @@ ALMS-Framework <br>
   * Datum auf Deutsch ändern
 
 ## Todos
+- Offline-Zugriff
 - Categorie und Forms: Text to Datefield
-- Fach hinzufügen: Fälligkeit
+- Fach hinzufügen: Fälligkeit (optional)
 - Gui: Lektion anklicken und danach filtern
 - Fehlerquote
 - Mathematische Formeln
