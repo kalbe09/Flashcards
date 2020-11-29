@@ -18,10 +18,9 @@ ALMS-Framework <br>
 
 
 ## Gewünschte Funktionen
-* Votesystem, um schlechte Karten auszusortieren
+
 * Import / Export 
 * Online-Repository, um Änderungen in Echtzeit zu verfolgen
-* Editorleiste für einfachere Erstellung von KK
 
 
 
@@ -33,19 +32,36 @@ ALMS-Framework <br>
 
 ## Todos
 - Offline-Zugriff
-- Categorie und Forms: Text to Datefield
-- Fach hinzufügen: Fälligkeit (optional)
+
 - Gui: Lektion anklicken und danach filtern
+  - mehrere Kategorien: select-box
+
+- Order by - Einstellungen bei Fach und Lektion
+  - nach Fälligkeit 
+  - nach Prio
+  - nach Name
+
 - Fehlerquote
-- Mathematische Formeln eingeben
-- Votesystem (90% der User dann delete)
+  - Anzeige
+  - Column: Anzahl der Abfragen
+  - Aktualisierung
+
+- Editor 
+  - Mathematische Formeln eingeben
+  - Editorleiste für einfachere Erstellung von KK
+
+- Votesystem, um schlechte Karten auszusortieren
+  - 90% der User dann delete
+  - User die das Fach folgen, nicht gesamte User
+  - Nur 1x voten
+
 - Import/export
-- Einstellbare Frist (Klausurtermin)
-    - Categorie und Forms: Text to Datefield
+  - eindeutige IDs um Konflikte zu vermeiden
+
+- Fälligkeitstermin 
+  - greater than now
 
 
-* Seit dem 25th November 2020 ein registrierter Benutzer
-  * Datum auf Deutsch ändern
 
 ## Erledigt
 - Wahr/Falsch Button anders platzieren
@@ -56,6 +72,10 @@ ALMS-Framework <br>
 - Votebuttons
 - Fach hinzufügen: Fälligkeit
 - Datenbankmodell erweitert
+- Fälligkeit und Prio in db eintragen
+- Fach hinzufügen: Fälligkeit (optional)
+* Seit dem 25th November 2020 ein registrierter Benutzer
+  * Datum auf Deutsch ändern
 
 ## Fragen
 - Quellen zu flask tutorial etc.? 
