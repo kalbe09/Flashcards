@@ -61,8 +61,8 @@ ALMS-Framework <br>
 - Fälligkeitstermin 
   - greater than now
 
-
-
+- delete column: timestamp in collection 
+- id: timestamp+colname/ts+col+cat/username/ts+user(cards)
 ## Erledigt
 - Wahr/Falsch Button anders platzieren
 - Neue Lektion erstellen
