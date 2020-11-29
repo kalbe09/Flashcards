@@ -13,7 +13,7 @@
                         {% endfor %}
                     </div>
                 </header>
-                <p class="flex-text">{{ collection.flashcards.count() }} Karteikarten in dem Fach</p>
+                <p class="flex-text">{{ collection.flashcards.count() }} Kicards</p>
                 <div class="delete">
                     <a href="{{ url_for('.delete_flashcardcollection', id=collection.id) }}">
                         <span class="label label-danger ">Löschen</span>
