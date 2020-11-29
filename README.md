@@ -8,12 +8,13 @@ ALMS-Framework <br>
   * Betriebssystemunabhängigkeit <br>
   * Freiheit  der  Bearbeitungssoftware <br>
 * «L» (Level of expertise required to revise or remix), <br>
-  * benötigte Expertise zur Software-Nutzung <br>
-  * sollte möglichst  gering  sein <br>
+  * benötigte Expertise zur Software-Nutzung sollte möglichst  gering  sein <br>
 * «M» (Meaningfully editable) <br>
 	* Editierbarkeit  der erstellten Materialien <br>
 * «S» (Source-file access) zur Präzisierung technischer Offenheit vorgestellt. <br>
   * Verfügbarkeit der Quellmaterialien. <br>
+
+
 
 
 ## Gewünschte Funktionen
@@ -21,43 +22,43 @@ ALMS-Framework <br>
 * Import / Export 
 * Online-Repository, um Änderungen in Echtzeit zu verfolgen
 * Editorleiste für einfachere Erstellung von KK
-* Erstellung: nächste Karte (immer nächste Karte)
-* Neue Lektion erstellen
+
+
+
+## Lernfokus 
+- Webapp mit Flask
+- Sicherheitsaspekte
+- Lernmethoden für Karteikarten
+
+
+## Todos
+- Gui: Lektion anklicken und danach filtern
+- Fehlerquote
+- Mathematische Formeln eingeben
+- Votesystem (90% der User dann delete)
+- Import/export
+- Einstellbare Frist (Klausurtermin)
+    - Categorie und Forms: Text to Datefield
+
+
 * Seit dem 25th November 2020 ein registrierter Benutzer
   * Datum auf Deutsch ändern
 
-## Todos
-- Categorie und Forms: Text to Datefield
-- Fach hinzufügen: Fälligkeit
-- Gui: Lektion anklicken und danach filtern
-- Fehlerquote
-- Mathematische Formeln
-- Votesystem (Anzahl User zählen * 90% dann delete)
-- Import/export
-- Einstellbare Frist (Klausurtermin)
-- karten
-  - letzte Abfrage
-  - phase
-  - nächste Abfrage
-- Löschen der Auswahlbox nächste Karte
-
 ## Erledigt
 - Wahr/Falsch Button anders platzieren
-- doppelten Lektionen möglich
+- Neue Lektion erstellen
+- doppelte Lektionen möglich
 - direkte Eingabe einer nächsten Karte
-- Wahr/Falsch Button anders platzieren
-
+- Löschen der Auswahlbox nächste Karte
+- Votebuttons
+- Fach hinzufügen: Fälligkeit
+- Datenbankmodell erweitert
 
 ## Fragen
 - Quellen zu flask tutorial etc.? 
 
 
-
-## Erledigt 
-
-
 ## Funkionen
-You can 
 - Registrierung eines User Accounts
 - Erstellung eigener Themengebiete  
 - Erstellung verschiedener Lektionen
