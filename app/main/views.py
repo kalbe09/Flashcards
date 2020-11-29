@@ -44,8 +44,10 @@ def user(username):
 
 
 # *********************************************************************************************************************
-# Add 
+# Add Collections, Categories, Flashcards
 # *********************************************************************************************************************
+
+# Collections***********************************************************************************************************
 @main.route('/add-collection', methods=['GET', 'POST'])
 @login_required
 def add_collection():
@@ -75,6 +77,8 @@ def add_collection():
     # for the template add_collection.html
     return render_template('add_collection.html', form=form)
 
+
+# Categories********************************************************************************************
 @main.route('/add-category/<int:id>/add-category', methods=['GET', 'POST'])
 @login_required
 def add_category(id):
@@ -104,7 +108,7 @@ def add_category(id):
         
        
 
-
+# Flashcards************************************************************************************************
 @main.route('/flashcardcollection/<int:id>/add-flashcard', methods=['GET', 'POST'])
 @login_required
 def add_flashcard(id):
