@@ -45,6 +45,15 @@ ALMS-Framework <br>
 - doppelten Lektionen möglich
 - direkte Eingabe einer nächsten Karte
 
+## Fragen
+- Quellen zu flask tutorial etc.? 
+
+
+
+## Erledigt 
+- Wahr/Falsch Button anders platzieren
+
+
 ## Funkionen
 You can 
 - Registrierung eines User Accounts
