@@ -124,5 +124,8 @@ To open a shell within the App Context run
 
 ```python3 manage.py shell```
 
-## Screenshots of the Application
-... 
+## Datenbankmodell
+![Datenbankmodell](/img/Datenbankmodell.png)
+
+## Klassendiagramm
+![Klassendiagramm](/img/Klassendiagramm.png)
