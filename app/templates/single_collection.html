@@ -25,9 +25,9 @@
         </a>
         <br>
         <div class="margTop">
-            <p class="label label-default">{{ flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).count() }} Kicard/s</p>
-            <p class="label label-danger">{{ flashcardcollection.flashcards.filter_by(wrong_answered=True).count() }} Falsche Antworten</p>
-            <p class="label label-success">{{ flashcardcollection.flashcards.filter_by(right_answered=True).count() }} Richtige Antworten</p>
+            <p class="label label-default">{{ flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).count() }} Kicards</p>
+            <p class="label label-danger">{{ flashcardcollection.flashcards.filter_by(wrong_answered=True).count() }} Falsch</p>
+            <p class="label label-success">{{ flashcardcollection.flashcards.filter_by(right_answered=True).count() }} Richtig</p>
         </div>
     </div>
     <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='normal') }}"><span
