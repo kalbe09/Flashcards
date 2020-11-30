@@ -27,23 +27,23 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 <hr>
 
 ## Installation
-1. **Anforderungen installieren**
+1. **Anforderungen installieren** <br>
   ```pip install -r requirements/common.txt```
 
-2. **Datenbank erstellen**
-  ```python3 manage.py db init```
-    ```python3 manage.py db migrate```
+2. **Datenbank erstellen**<br>
+  ```python3 manage.py db init```<br>
+    ```python3 manage.py db migrate```<br>
   ```python3 manage.py db upgrade```
 
-3. **Webapplikation / Server starten**
+3. **Webapplikation / Server starten** <br>
     ```python3 manage.py runserver```
 
 
 
-  **Tests starten**
+  **Tests starten** <br>
   ```python3 manage.py test```
 
-  **Shell öffnen**
+  **Shell öffnen** <br>
   ```python3 manage.py shell```
 <hr>
 
