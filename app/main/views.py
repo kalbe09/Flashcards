@@ -25,7 +25,7 @@ def after_request(response):
 @main.route('/')
 def index():
     if current_user.is_authenticated:
-        collections = current_user.collections.order_by(Collection.timestamp.desc()).all()
+        collections = current_user.collections.order_by(Collection.prio.desc()).all()
     else:
         collections = []
     return render_template('index.html', collections=collections)
@@ -55,13 +55,21 @@ def add_collection():
     
     # After pressing the button
     if form.validate_on_submit():
-        
-         # Save Category ?????
+        now = datetime.datetime.now()
+        now = datetime.date(now.year, now.month, now.day)
+
+        # Validate entered duedate
+        if form.duedate.data != None:
+            if form.duedate.data < now:
+                flash("Der Fälligkeitstermin liegt in der Vergangenheit")
+                return render_template('add_collection.html', form=form)            
+            
+        # Save Category ?????
         category = Category.query.filter_by(name=form.category.data).first()
         if category is None:
             category = Category(name=form.category.data, duedate=form.duedate.data)
-        
-         # Add attributes to the new collection
+            
+        # Add attributes to the new collection
         collection = Collection(name=form.name.data, duedate=form.duedate.data, prio=form.prio.data)
         collection.categories.append(category)
         collection.user = current_user
@@ -86,9 +94,17 @@ def add_category(id):
     
     # Determine the current collection
     flashcardcollection = Collection.query.get_or_404(id)
-
+    
     # After pressing the button
     if form.validate_on_submit():
+        now = datetime.datetime.now()
+        now = datetime.date(now.year, now.month, now.day)
+        
+        # Validate entered duedate
+        if form.duedate.data != None:
+            if form.duedate.data < now:
+                flash("Der Fälligkeitstermin liegt in der Vergangenheit")
+                return render_template('add_category.html', form=form, name=flashcardcollection.name)
         
         # create new category and put it in the list of his collection
         category = Category(name=form.name.data, duedate=form.duedate.data, prio=form.prio.data)
@@ -101,7 +117,7 @@ def add_category(id):
         # Short notice and redirection to home
         flash('Lektion hinzugefügt')
         return redirect(url_for('.flashcardcollection', id=flashcardcollection.id))
-    # for the template add_category.html
+        # for the template add_category.html
     return render_template('add_category.html', form=form, name=flashcardcollection.name)
         
         
@@ -208,6 +224,7 @@ def flashcard(collId, cardId):
     if flashcard is None:
         abort(404)
     return render_template('flashcard.html', flashcardcollection=flashcardcollection, flashcard=flashcard)
+
 
 # *********************************************************************************************************************
 # Delete 

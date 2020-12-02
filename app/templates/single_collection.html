@@ -5,9 +5,22 @@
 {% block page_content %}
     <div class="page-header">
         <h1> {{ flashcardcollection.name }} </h1>
+        <p class="label label-default">Priorität: {{ flashcardcollection.prio}} </p>
+        <br>
+        {% if flashcardcollection.duedate != None %}
+        <p class="label label-default">Fälligkeitstermin: {{ flashcardcollection.duedate }} </p>
+        {% endif %}
+        <div class="margTop">
+            <p class="label label-default">{{ flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).count() }} Kicards</p>
+            <p class="label label-danger">{{ flashcardcollection.flashcards.filter_by(wrong_answered=True).count() }} Falsch</p>
+            <p class="label label-success">{{ flashcardcollection.flashcards.filter_by(right_answered=True).count() }} Richtig</p>
+        </div>
 
-        
-        
+
+        <!-- <div class="margTop"></div>
+         -->
+        <br>
+        <br>
         <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Wähle eine Lektion
             <span class="caret"></span></button>
@@ -17,18 +30,12 @@
               {% endfor %}
             </ul>
           </div> 
-      
-        <br>
-        <br>
         <a href="{{ url_for('.add_category', id=flashcardcollection.id) }}">
             <span class="label label-default">Lektion hinzufügen</span></a>
+        
         </a>
         <br>
-        <div class="margTop">
-            <p class="label label-default">{{ flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).count() }} Kicards</p>
-            <p class="label label-danger">{{ flashcardcollection.flashcards.filter_by(wrong_answered=True).count() }} Falsch</p>
-            <p class="label label-success">{{ flashcardcollection.flashcards.filter_by(right_answered=True).count() }} Richtig</p>
-        </div>
+
     </div>
     <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='normal') }}"><span
             class="btn btn-primary btn-learn">Alle lernen</span></a>
