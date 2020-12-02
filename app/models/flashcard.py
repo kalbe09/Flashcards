@@ -22,6 +22,7 @@ class Flashcard(db.Model):
     wrong_answered = db.Column(db.Boolean, default=False)
     sum_right_answered = db.Column(db.Integer, default=0)
     sum_wrong_answered = db.Column(db.Integer, default=0)
+    sum_answered = db.Column(db.Integer, default=0)
     quote = db.Column(db.Float, default=0)
 
     vote_bad = db.Column(db.Integer, default=0)
