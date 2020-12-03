@@ -37,7 +37,7 @@ def user(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         abort(404)
-    collections = current_user.collections.order_by(Collection.timestamp.desc()).all()
+    collections = current_user.collections.order_by(Collection.prio.desc()).all()
     return render_template('user.html', user=user, collections=collections)
 
 
