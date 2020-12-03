@@ -285,6 +285,9 @@ def learn(id):
         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
     elif mode == 'wrong_ones':
         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
+    elif mode == 'bad_ones':
+        #flash(flashcardcollection.flashcards.quote)
+        flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(50).all()
     else:
         abort(404)
     if not flashcards:
@@ -317,7 +320,8 @@ def wrong_answer(collId, cardId):
     flashcard.wrong_answered = True
     flashcard.right_answered = False
     flashcard.sum_wrong_answered += 1
-    flashcard.quote = flashcard.sum_wrong_answered/flashcard.sum_right_answered
+    flashcard.sum_answered +=1
+    flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
 
 # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
 # flashcard.phase = 0
@@ -340,7 +344,8 @@ def right_answer(collId, cardId):
     flashcard.wrong_answered = False
     flashcard.right_answered = True
     flashcard.sum_right_answered += 1
-
+    flashcard.sum_answered +=1
+    flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
 # flashcard.phase += 1
 
     flashcard.lastdate = datetime.datetime.now().strftime("%d.%m.%Y")
