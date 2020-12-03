@@ -7,10 +7,10 @@
         <h1> {{ flashcardcollection.name }} / Karteikarte {{ flashcard.id }} </h1>
 
         <a href="{{ url_for('.edit_flashcard', collId=flashcardcollection.id, cardId=flashcard.id) }}">
-            <p class="label label-danger">{{ flashcard.sum_wrong_answered}}x Falsch</p>
+            <!-- <p class="label label-danger">{{ flashcard.sum_wrong_answered}}x Falsch</p>
             <p class="label label-success">{{flashcard.sum_right_answered}}x Richtig</p>
-            <p class="label label-default">{{flashcard.sum_answered}}x geübt</p> <br>
-            <p class="label label-success">{{flashcard.quote}} Quote</p>
+            <p class="label label-default">{{flashcard.sum_answered}}x geübt</p> <br> -->
+            <p class="label label-success">Fehlerquote: {{flashcard.quote}}</p>
             <span class="label label-primary">Bearbeiten</span>
         </a>
     </div>
