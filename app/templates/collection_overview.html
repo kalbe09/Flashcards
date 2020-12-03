@@ -7,6 +7,7 @@
             <article class="thumbnail">
                 <header>
                     <h3><a href="{{ url_for('.flashcardcollection', id=collection.id) }}">{{ collection.name }}</a></h3>
+                    <p class="label label-success">Priorität: {{collection.prio}}</p>
                     <div class="category">
                         {% for category in collection.categories %}
                             <span class="label label-primary">{{ category.name }}</span>
