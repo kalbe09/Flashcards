@@ -50,22 +50,29 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 
 
 ## Todos
-- Offline-Zugriff
-* Import / Export 
-* Online-Repository, um Änderungen in Echtzeit zu verfolgen
 
-- Gui: Lektion anklicken und danach filtern
+* Import / Export 
+  - eindeutige IDs um Konflikte zu vermeiden
+  - id: timestamp+colname/ts+col+cat/username/ts+user(cards)
+
+
+
+
+
+
+* Import / Export 
+
+- Offline-Zugriff
+  - Online-Repositories
+  - Lokale Repositories
+
+- Gui: nach Lektionen filtern
   - mehrere Kategorien: select-box
 
-- Order by - Einstellungen bei Fach und Lektion
+- Order by - Einstellungen Lektion
   - nach Fälligkeit 
   - nach Prio
-  - nach Name
 
-- Fehlerquote
-  - Anzeige
-  - Column: Anzahl der Abfragen
-  - Aktualisierung
 
 - Editor 
   - Mathematische Formeln eingeben
@@ -76,14 +83,10 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
   - User die das Fach folgen, nicht gesamte User
   - Nur 1x voten
 
-- Import/export
-  - eindeutige IDs um Konflikte zu vermeiden
 
-- Fälligkeitstermin 
-  - greater than now
 
-- delete column: timestamp in collection 
-- id: timestamp+colname/ts+col+cat/username/ts+user(cards)
+
+
 ## Erledigt
 - Wahr/Falsch Button anders platzieren
 - Neue Lektion erstellen
@@ -97,6 +100,15 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 - Fach hinzufügen: Fälligkeit (optional)
 * Seit dem 25th November 2020 ein registrierter Benutzer
   * Datum auf Deutsch ändern
+- Order by - Einstellungen bei Fach
+  - nach Prio
+- Column: Anzahl der Abfragen
+- Fälligkeitstermin 
+  - greater than now
+- Fehlerquote
+  - Anzeige
+  - Aktualisierung
+- delete column: timestamp in collection 
 
 
 ## Funkionen
