@@ -50,6 +50,8 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 
 
 ## Todos
+- lernen: Anzeige der Kategorie, quote, phase
+
 - Offline-Zugriff
 * Import / Export 
 * Online-Repository, um Änderungen in Echtzeit zu verfolgen
