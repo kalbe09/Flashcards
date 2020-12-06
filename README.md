@@ -50,6 +50,7 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 
 
 ## Todos
+<<<<<<< HEAD
 
 * Import / Export 
   - eindeutige IDs um Konflikte zu vermeiden
@@ -60,6 +61,11 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 
 
 
+=======
+- lernen: Anzeige der Kategorie, quote, phase
+
+- Offline-Zugriff
+>>>>>>> 79d2cc6fcd6c55f34add8b9eae447256c96675f8
 * Import / Export 
 
 - Offline-Zugriff
