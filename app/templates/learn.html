@@ -16,6 +16,9 @@
     </div>
 
     <div>
+        <p class="label label-success">Kategorie: {{category.name}}</p>
+        <p class="label label-success">Fehlerquote: {{(flashcard.quote*100)|round|int}} %</p>
+        <p class="label label-success">Phase: {{flashcard.phase}}</p>
         <h2>Frage:</h2>
         <div class="flashcard-body">
             {% if flashcard.question_html %}

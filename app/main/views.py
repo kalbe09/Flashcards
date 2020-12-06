@@ -280,6 +280,7 @@ def edit_flashcard(collId, cardId):
 @login_required
 def learn(id):
     flashcardcollection = Collection.query.get_or_404(id)
+    category = Category.query.get_or_404(id)
     mode = request.args.get('mode')
     if mode == 'normal':
         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
@@ -295,7 +296,7 @@ def learn(id):
         return redirect(url_for('.flashcardcollection', id=id))
     else:
         flashcard = choice(flashcards)
-    return render_template('learn.html', flashcard=flashcard, collection=flashcardcollection)
+    return render_template('learn.html', flashcard=flashcard, collection=flashcardcollection, category=category)
 
 
 @main.route('/flashcardcollection/<int:id>/reset-cards')
