@@ -54,7 +54,11 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
   - eindeutige IDs um Konflikte zu vermeiden
   - id: timestamp+colname/ts+col+cat/username/ts+user(cards)
 - Schleife für falsch beantwortete Karten
-- lernen: Anzeige der Kategorie, phase (evtl nicht --> Beeinflussung)
+- Sicht einzelnes Fach: 
+  - Farben reduzieren
+  - Falsche lernen rausschmeißen wg. Schleife
+
+- doppelte Fragen verhindern
 
 - Offline-Zugriff
 * Import / Export 
@@ -105,6 +109,9 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
   - Anzeige
   - Aktualisierung
 - delete column: timestamp in collection 
+- phasen-Handling and nextdate
+- Lernmode: Heute
+- lernen: Anzeige der Kategorie, phase (evtl nicht --> Beeinflussung)
 
 
 ## Funkionen
