@@ -53,8 +53,8 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 * Import / Export 
   - eindeutige IDs um Konflikte zu vermeiden
   - id: timestamp+colname/ts+col+cat/username/ts+user(cards)
-
-- lernen: Anzeige der Kategorie, phase
+- Schleife für falsch beantwortete Karten
+- lernen: Anzeige der Kategorie, phase (evtl nicht --> Beeinflussung)
 
 - Offline-Zugriff
 * Import / Export 
@@ -69,7 +69,6 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 - Order by - Einstellungen Lektion
   - nach Fälligkeit 
   - nach Prio
-
 
 - Editor 
   - Mathematische Formeln eingeben
