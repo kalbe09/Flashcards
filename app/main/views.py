@@ -5,6 +5,7 @@ from ..models.users import User
 from ..models.category import Category
 from ..models.flashcard_collections import Collection
 from ..models.flashcard import Flashcard
+from ..models.phasen import Phasen
 from . import main
 from .. import db
 from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm
@@ -26,6 +27,26 @@ def after_request(response):
 def index():
     if current_user.is_authenticated:
         collections = current_user.collections.order_by(Collection.prio.desc()).all()
+        if Phasen.query.first() == None:
+            phase1 = Phasen(waiting_days=0)
+            phase2 = Phasen(waiting_days=2)
+            phase3 = Phasen(waiting_days=4)
+            phase4 = Phasen(waiting_days=6)
+            phase5 = Phasen(waiting_days=8)
+            phase6 = Phasen(waiting_days=10)
+            phase7 = Phasen(waiting_days=50)
+    
+            # update database
+            db.session.add(phase1)
+            db.session.add(phase2)
+            db.session.add(phase3)
+            db.session.add(phase4)
+            db.session.add(phase5)
+            db.session.add(phase6)
+            db.session.add(phase7)
+            db.session.commit()
+
+    
     else:
         collections = []
     return render_template('index.html', collections=collections)
@@ -141,7 +162,7 @@ def add_flashcard(id):
 # elegantere Lösung??????
         card = Flashcard(question=form.question.data, 
             answer=form.answer.data,
-            category_id=id, collection_id = collection.name)
+            category_id=id, collection_id = collection.name, phase=1)
 
 
         collection.flashcards.append(card)
@@ -282,13 +303,19 @@ def learn(id):
     flashcardcollection = Collection.query.get_or_404(id)
     category = Category.query.get_or_404(id)
     mode = request.args.get('mode')
+    
     if mode == 'normal':
         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
+    
     elif mode == 'wrong_ones':
         flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
+    
     elif mode == 'bad_ones':
         #flash(flashcardcollection.flashcards.quote)
         flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(50).all()
+    elif mode == 'today':
+        flashcards = flashcardcollection.flashcards.filter_by(nextdate=datetime.datetime.now().date()).all()
+    
     else:
         abort(404)
     if not flashcards:
@@ -323,12 +350,14 @@ def wrong_answer(collId, cardId):
     flashcard.sum_wrong_answered += 1
     flashcard.sum_answered +=1
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
-
-# Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
-# flashcard.phase = 0
     
-    flashcard.lastdate = datetime.datetime.now().strftime("%d.%m.%Y")
-# flashcard.nextdate = phase * faktor
+# Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
+    flashcard.phase = 1
+    waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
+
+    flashcard.lastdate = datetime.datetime.now().date()#strftime("%d.%m.%Y")
+    flashcard.nextdate = (datetime.datetime.now() + datetime.timedelta(
+        days=waitingdays)).date()
     
     # database update    
     db.session.add(flashcard)
@@ -347,10 +376,14 @@ def right_answer(collId, cardId):
     flashcard.sum_right_answered += 1
     flashcard.sum_answered +=1
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
-# flashcard.phase += 1
+    waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
 
-    flashcard.lastdate = datetime.datetime.now().strftime("%d.%m.%Y")
-# flashcard.nextdate = phase * faktor
+    if waitingdays < 7:
+        flashcard.phase += 1
+
+    flashcard.lastdate = datetime.datetime.now().date()#.strftime("%d.%m.%Y")
+    flashcard.nextdate = (datetime.datetime.now() + datetime.timedelta(
+        days=waitingdays)).date()
 
     # database update
     db.session.add(flashcard)

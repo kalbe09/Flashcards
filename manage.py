@@ -12,6 +12,7 @@ from app.models.users import User
 from app.models.flashcard_collections import Collection
 from app.models.category import Category
 from app.models.flashcard import Flashcard
+from app.models.phasen import Phasen
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
@@ -22,7 +23,7 @@ migrate = Migrate(app, db)
 
 def make_shell_context():
     return dict(app=app, db=db, User=User, Collection=Collection, \
-                Category=Category, Flashcard=Flashcard)
+                Category=Category, Flashcard=Flashcard, Phasen=Phasen)
 
 
 manager.add_command("shell", Shell(make_context=make_shell_context))
