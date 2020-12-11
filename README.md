@@ -84,7 +84,15 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
   - Nur 1x voten
 
 
-
+## Usecases 
+- X Karten nehmen und diese lernen
+    - Karten nehmen: 
+        - während des Lernens
+        - aus Übersicht 
+    - am Ende: Frage ob diese Karten nochmal wiederholt werden sollen
+    - Speicherung der Kombination für später 
+    - zurück zum normalen Lernmodus
+    - Übersicht + Bearbeiten
 
 
 ## Erledigt
