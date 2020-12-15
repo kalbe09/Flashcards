@@ -38,6 +38,17 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 3. **Webapplikation / Server starten** <br>
     ```python3 manage.py runserver```
 
+|musst have |should have | could have
+
+
+|musst have    |should have | could have |
+|---|---|---|
+|Kicards eingeben|Bilder|Import / Export|
+|Abfrage|   |Mathematische Formeln|
+|  Lektionen erstellen |   | Votesystem  |
+|Fach erstellen | | |
+|Benutzerkonto erstellen| | |
+
 
 
   **Tests starten** <br>
