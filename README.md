@@ -43,11 +43,28 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 
 |musst have    |should have | could have |
 |---|---|---|
-|Kicards eingeben|Bilder|Import / Export|
-|Abfrage|   |Mathematische Formeln|
-|  Lektionen erstellen |   | Votesystem  |
-|Fach erstellen | | |
-|Benutzerkonto erstellen| | |
+|**Benutzerkonto** || |
+|Erstellen|Bearbeiten|Profilfoto ändern|
+|| Löschen| |
+|| | |
+|**Fach** || |
+|Erstellen| Löschen | |
+||Bearbeiten (Name, Prio, Fälligkeit) | |
+| **Lektionen**|| |
+|Erstellen| Bearbeiten (Name, Prio, Fälligkeit)| Editorleiste|
+||Löschen | |
+|| | |
+|**Kicards** || |
+|Erstellen | Bilder |Mathematische Formeln |
+|Heutige Abfrage| Schlechtesten Karten abfragen | Karten fürs intensivere Lernen auswählen und lernen|
+|**Sonstiges** | | |
+| | Import / Export|Votesystem |
+||||
+||   ||
+|   |   |   |
+
+
+
 
 
 
