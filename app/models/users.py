@@ -17,6 +17,7 @@ class User(UserMixin, db.Model):
     avatar_hash = db.Column(db.String(32))
     member_since = db.Column(db.DateTime, default=datetime.utcnow)
     collections = db.relationship('Collection', backref='user', lazy='dynamic')
+    flashcards = db.relationship('Flashcard', backref='user', lazy='dynamic')
 
     @property
     def password(self):

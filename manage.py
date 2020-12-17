@@ -13,6 +13,7 @@ from app.models.flashcard_collections import Collection
 from app.models.category import Category
 from app.models.flashcard import Flashcard
 from app.models.phasen import Phasen
+from app.models.learning import Learning
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 

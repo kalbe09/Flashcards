@@ -5,12 +5,14 @@ from ..models.users import User
 from ..models.category import Category
 from ..models.flashcard_collections import Collection
 from ..models.flashcard import Flashcard
+from ..models.learning import Learning
 from ..models.phasen import Phasen
 from . import main
 from .. import db
 from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm
 from random import choice
 import datetime
+import random
 
 
 @main.after_app_request
@@ -27,6 +29,8 @@ def after_request(response):
 def index():
     if current_user.is_authenticated:
         collections = current_user.collections.order_by(Collection.prio.desc()).all()
+        flashcards = Flashcard.query.all()
+        flash(flashcards)
         if Phasen.query.first() == None:
             phase1 = Phasen(waiting_days=0)
             phase2 = Phasen(waiting_days=2)
@@ -46,10 +50,13 @@ def index():
             db.session.add(phase7)
             db.session.commit()
 
+        now = datetime.datetime.now()
+        now = datetime.date(now.year, now.month, now.day)
+        flash(now)
     
     else:
         collections = []
-    return render_template('index.html', collections=collections)
+    return render_template('index.html', collections=collections, flashcards=flashcards)
 
 
 @main.route('/user/<username>')
@@ -299,31 +306,47 @@ def edit_flashcard(collId, cardId):
 
 @main.route('/flashcardcollection/<int:id>/learn')
 @login_required
-def learn(id):
+def learn(id, flashcards=None):
     flashcardcollection = Collection.query.get_or_404(id)
     category = Category.query.get_or_404(id)
-    mode = request.args.get('mode')
+ 
+    # For the starting of a learning session flashcards == None   
+    if (flashcards == None):
+        mode = request.args.get('mode')
+        now = datetime.datetime.now()
+
+
+        # Selecting new flashcards
+        if mode == 'all':
+            flashcards = flashcardcollection.flashcards.filter_by().all()
+        elif mode == 'bad_ones':
+            flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(50).all()
+        elif mode == 'today':
+            flashcards = flashcardcollection.flashcards.filter_by(nextdate=datetime.datetime.now().date()).all()   
+        else:
+            abort(404)
+         # Add attributes to the new collection
+        # strfc = " "
+        # strfc.join(flashcards)
+        #flash(" ".join(flashcards.id))
+        #learning = Learning(startime=now, mode=mode, flashcards=flashcards)
+
+        # update database
+        #db.session.add(learning)
+        #  db.session.commit()
+
+
+    flash(flashcards)
     
-    if mode == 'normal':
-        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
-    
-    elif mode == 'wrong_ones':
-        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
-    
-    elif mode == 'bad_ones':
-        #flash(flashcardcollection.flashcards.quote)
-        flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(50).all()
-    elif mode == 'today':
-        flashcards = flashcardcollection.flashcards.filter_by(nextdate=datetime.datetime.now().date()).all()
-    
-    else:
-        abort(404)
+    # No flashcards available anymore
     if not flashcards:
         flash('No Cards to learn. Please reset the Cards or learn the Wrong ones if there are any.')
         return redirect(url_for('.flashcardcollection', id=id))
+    
+    # If flashcards available choice a random one
     else:
-        flashcard = choice(flashcards)
-    return render_template('learn.html', flashcard=flashcard, collection=flashcardcollection, category=category)
+        flashcard = random.choice(flashcards)
+    return render_template('learn.html', flashcard=flashcard, flashcards=flashcards, collection=flashcardcollection, category=category)
 
 
 @main.route('/flashcardcollection/<int:id>/reset-cards')
@@ -333,8 +356,6 @@ def reset_cards(id):
     for card in coll.flashcards.all():
         card.wrong_answered = False
         card.right_answered = False
-        #card.sum_right_answered = 0
-        #card.sum_wrong_answered = 0
     db.session.add(coll)
     db.session.commit()
     return redirect(url_for('.flashcardcollection', id=id))
@@ -345,6 +366,8 @@ def reset_cards(id):
 @login_required
 def wrong_answer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
+    flashcards = request.args.get('flashcards')
+
     flashcard.wrong_answered = True
     flashcard.right_answered = False
     flashcard.sum_wrong_answered += 1
@@ -364,13 +387,18 @@ def wrong_answer(collId, cardId):
     db.session.commit()
     
     # next card
-    return redirect(url_for('.learn', id=collId, mode=request.args.get('mode')))
+    return redirect(url_for('.learn', id=collId, flashcards=flashcards, mode=request.args.get('mode')))
 
 
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/right')
 @login_required
 def right_answer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
+    flashcards = request.args.get('flashcards', )
+
+    #flash("J")
+    flash(flashcards.all())
+
     flashcard.wrong_answered = False
     flashcard.right_answered = True
     flashcard.sum_right_answered += 1
@@ -390,4 +418,4 @@ def right_answer(collId, cardId):
     db.session.commit()
     
     # next card
-    return redirect(url_for('.learn', id=collId, mode=request.args.get('mode')))
+    return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), mode=request.args.get('mode')))

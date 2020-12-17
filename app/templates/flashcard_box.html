@@ -4,7 +4,7 @@
             <article class="thumbnail">
                 <header>
                     <h3>
-                        <a href="{{ url_for('.flashcard', collId=flashcardcollection.id, cardId=flashcard.id) }}">Karteikarte {{ loop.index }}</a>
+                        <a href="{{ url_for('.flashcard', collId=flashcardcollection.id, cardId=flashcard.id) }}">{{ flashcard.question[:30] }}...</a>
                     </h3>
                     <!-- <p class="label label-danger">{{ flashcard.sum_wrong_answered}}x Falsch</p>
                     <p class="label label-success">{{flashcard.sum_right_answered}}x Richtig</p>
@@ -12,7 +12,7 @@
                     <p class="label label-success">Fehlerquote: {{flashcard.quote}}</p><br>                    
                     
                 </header>
-                <p class="flex-text">{{ flashcard.question[:20] }}...</p>
+                <p class="flex-text">Karteikarte {{ loop.index }}</p>
                 <div class="delete">
                     <a href="{{ url_for('.delete_card', collId=flashcardcollection.id, cardId=flashcard.id) }}">
                         <span class="label label-danger">Löschen</span>

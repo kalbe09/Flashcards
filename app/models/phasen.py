@@ -8,4 +8,4 @@ class Phasen(db.Model):
     flashcards = db.relationship('Flashcard', backref='flashcard', lazy='dynamic')
 
     def __repr__(self):
-        return '<Category: %r>' % self.name
+        return '<Phasen: %r>' % self.id
