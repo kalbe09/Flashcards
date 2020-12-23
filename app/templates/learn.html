@@ -18,6 +18,10 @@
     <div>
         <p class="label label-success">Kategorie: {{category.name}}</p>
         <p class="label label-success">Fehlerquote: {{(flashcard.quote*100)|round|int}} %</p>
+        <br>
+        <br>
+        <a href="{{ url_for('.add_learningcards', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
+            class="btn btn-default">Für später merken</span></a>
         <!-- <p class="label label-success">Phase: {{flashcard.phase}}</p> -->
         <h2>Frage:</h2>
         <div class="flashcard-body">

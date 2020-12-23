@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response, request, current_app
+from flask import render_template, redirect, url_for, abort, flash, jsonify, make_response, request, current_app, session
 from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from ..models.users import User
@@ -13,6 +13,8 @@ from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCa
 from random import choice
 import datetime
 import random
+
+#main.config['SECRET_KEY'] = 'oh_so_secret'
 
 
 @main.after_app_request
@@ -323,24 +325,15 @@ def learn(id, flashcards=None):
             flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(50).all()
         elif mode == 'today':
             flashcards = flashcardcollection.flashcards.filter_by(nextdate=datetime.datetime.now().date()).all()   
+        elif mode == 'session':
+            flashcards = flashcardcollection.flashcards.filter(Flashcard.id.in_(session["cards"])).all()
+            #flash(flashcards)
         else:
             abort(404)
-         # Add attributes to the new collection
-        # strfc = " "
-        # strfc.join(flashcards)
-        #flash(" ".join(flashcards.id))
-        #learning = Learning(startime=now, mode=mode, flashcards=flashcards)
-
-        # update database
-        #db.session.add(learning)
-        #  db.session.commit()
-
-
-    flash(flashcards)
     
     # No flashcards available anymore
     if not flashcards:
-        flash('No Cards to learn. Please reset the Cards or learn the Wrong ones if there are any.')
+        flash('Keine Kicards in dieser Sektion vorhanden.')
         return redirect(url_for('.flashcardcollection', id=id))
     
     # If flashcards available choice a random one
@@ -373,7 +366,8 @@ def wrong_answer(collId, cardId):
     flashcard.sum_wrong_answered += 1
     flashcard.sum_answered +=1
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
-    
+
+
 # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
     flashcard.phase = 1
     waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
@@ -386,6 +380,8 @@ def wrong_answer(collId, cardId):
     db.session.add(flashcard)
     db.session.commit()
     
+
+
     # next card
     return redirect(url_for('.learn', id=collId, flashcards=flashcards, mode=request.args.get('mode')))
 
@@ -396,9 +392,7 @@ def right_answer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
     flashcards = request.args.get('flashcards', )
 
-    #flash("J")
-    flash(flashcards.all())
-
+    
     flashcard.wrong_answered = False
     flashcard.right_answered = True
     flashcard.sum_right_answered += 1
@@ -417,5 +411,28 @@ def right_answer(collId, cardId):
     db.session.add(flashcard)
     db.session.commit()
     
+
+
+    mode = request.args.get('mode')
+    if mode == "session":
+        session["cards"].remove(flashcard.id)
+        #flash(session["cards"])
+
     # next card
+    return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), mode=request.args.get('mode')))
+
+
+
+
+@main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/add')
+@login_required
+def add_learningcards(collId, cardId):
+    if "cards" not in session:
+        session["cards"] = []
+    if cardId not in session["cards"]:
+        session["cards"].append(cardId)
+        flash("Karte für die nächste Session hinzugefügt")
+    else:
+        flash("Karte schon in Session vorhanden")
+    #flash(session["cards"])
     return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), mode=request.args.get('mode')))

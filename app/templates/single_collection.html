@@ -38,15 +38,17 @@
 
     </div>
     <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='today') }}">
-        <span class="btn btn-danger btn-learn">Heute</span>
+        <span class="btn btn-primary btn-learn">Heute</span>
     </a>
     <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='all') }}">
         <span class="btn btn-primary btn-learn">Alle lernen</span>
     </a>
     <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='bad_ones') }}">
-        <span class="btn btn-danger btn-learn">Schlechtesten lernen</span>
+        <span class="btn btn-primary btn-learn">Schlechtesten lernen</span>
     </a>
-
+    <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='session') }}">
+        <span class="btn btn-primary btn-learn">Session lernen</span>
+    </a>
     <!-- <a href="{{ url_for('.reset_cards', id=flashcardcollection.id) }}">
         <span class="btn btn-warning btn-learn">Lernstand zurücksetzen</span>
     </a> -->
