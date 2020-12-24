@@ -184,7 +184,7 @@ def add_flashcard(colid, catid):
         
         # Short notice and redirection to home
         flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(collection.name))        
-        return redirect(url_for('.add_flashcard', id=collection.colid))
+        return redirect(url_for('.add_flashcard', colid=collection.id, catid=collection.id))
     
     # for the template add_flashcard.html
     return render_template('add_flashcard.html', form=form, name=collection.name)
@@ -210,13 +210,13 @@ def get_category():
 def flashcardcollection(id):
     flashcardcollection = Collection.query.get_or_404(id)
 
-        catid = request.args.get('catid')
-        if catid != 'Null':
-            flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
-        elif catid == 'wrong_ones':
-            flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
-        else:
-            abort(404)
+    catid = request.args.get('catid')
+    if catid != 'Null':
+        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
+    elif catid == 'wrong_ones':
+        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
+    else:
+        abort(404)
     return render_template('single_collection.html', flashcardcollection=flashcardcollection)
 
 
