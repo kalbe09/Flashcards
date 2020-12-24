@@ -10,7 +10,7 @@
             <!-- <p class="label label-danger">{{ flashcard.sum_wrong_answered}}x Falsch</p>
             <p class="label label-success">{{flashcard.sum_right_answered}}x Richtig</p>
             <p class="label label-default">{{flashcard.sum_answered}}x geübt</p> <br> -->
-            <p class="label label-success">Fehlerquote: {{flashcard.quote}}</p>
+            <p class="label label-success">Fehlerquote: {{(flashcard.quote*100)|round|int}} %</p>
             <span class="label label-primary">Bearbeiten</span>
         </a>
     </div>
