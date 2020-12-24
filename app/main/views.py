@@ -14,8 +14,6 @@ from random import choice
 import datetime
 import random
 
-#main.config['SECRET_KEY'] = 'oh_so_secret'
-
 
 @main.after_app_request
 def after_request(response):
@@ -27,40 +25,35 @@ def after_request(response):
     return response
 
 
+
+
+
+
+# INDEX.HTML ******************** 
 @main.route('/')
 def index():
     if current_user.is_authenticated:
+        # shows collections ordered by priority
         collections = current_user.collections.order_by(Collection.prio.desc()).all()
         flashcards = Flashcard.query.all()
-        flash(flashcards)
-        if Phasen.query.first() == None:
-            phase1 = Phasen(waiting_days=0)
-            phase2 = Phasen(waiting_days=2)
-            phase3 = Phasen(waiting_days=4)
-            phase4 = Phasen(waiting_days=6)
-            phase5 = Phasen(waiting_days=8)
-            phase6 = Phasen(waiting_days=10)
-            phase7 = Phasen(waiting_days=50)
-    
-            # update database
-            db.session.add(phase1)
-            db.session.add(phase2)
-            db.session.add(phase3)
-            db.session.add(phase4)
-            db.session.add(phase5)
-            db.session.add(phase6)
-            db.session.add(phase7)
-            db.session.commit()
 
-        now = datetime.datetime.now()
-        now = datetime.date(now.year, now.month, now.day)
-        flash(now)
-    
+        # if phases are not initiated 
+        if Phasen.query.first() == None:
+            db.session.add(Phasen(waiting_days=0))
+            db.session.add(Phasen(waiting_days=2))
+            db.session.add(Phasen(waiting_days=4))
+            db.session.add(Phasen(waiting_days=6))
+            db.session.add(Phasen(waiting_days=7))
+            db.session.add(Phasen(waiting_days=8))
+            db.session.add(Phasen(waiting_days=9))
+            db.session.commit()
     else:
         collections = []
     return render_template('index.html', collections=collections, flashcards=flashcards)
 
 
+
+# USER.HTML ********************  
 @main.route('/user/<username>')
 @login_required
 def user(username):
@@ -78,13 +71,16 @@ def user(username):
 # *********************************************************************************************************************
 
 # Collections***********************************************************************************************************
+# ADD_Collection.HTML ******************** 
 @main.route('/add-collection', methods=['GET', 'POST'])
 @login_required
 def add_collection():
     form = CollectionForm()
     
-    # After pressing the button
+    # After pressing the submit button
     if form.validate_on_submit():
+        
+        # identify the current date
         now = datetime.datetime.now()
         now = datetime.date(now.year, now.month, now.day)
 
@@ -94,7 +90,8 @@ def add_collection():
                 flash("Der Fälligkeitstermin liegt in der Vergangenheit")
                 return render_template('add_collection.html', form=form)            
             
-        # Save Category ?????
+        # if the category does not exist, save all entered data in a new object category
+# ACHTUNG: Schaut für alle Collections
         category = Category.query.filter_by(name=form.category.data).first()
         if category is None:
             category = Category(name=form.category.data, duedate=form.duedate.data)
@@ -116,8 +113,11 @@ def add_collection():
     return render_template('add_collection.html', form=form)
 
 
+
+
 # Categories********************************************************************************************
-@main.route('/add-category/<int:id>/add-category', methods=['GET', 'POST'])
+# ADD_CATEGORY.HTML ******************** 
+@main.route('/add-category/collection/<int:id>', methods=['GET', 'POST'])
 @login_required
 def add_category(id):
     form = FlashcardCategoryForm()
@@ -153,16 +153,16 @@ def add_category(id):
         
         
        
-
 # Flashcards************************************************************************************************
-@main.route('/flashcardcollection/<int:id>/add-flashcard', methods=['GET', 'POST'])
+# ADD_FLASHCARD.HTML ******************** 
+@main.route('/add-flashcard/collection/<int:colid>/category/<int:catid>', methods=['GET', 'POST'])
 @login_required
-def add_flashcard(id):
+def add_flashcard(colid, catid):
     form = FlashcardForm()
     
     # Determine the current collection and category
-    collection = Collection.query.get_or_404(id)
-    category = Collection.query.get_or_404(id)
+    collection = Collection.query.get_or_404(colid)
+    category = Collection.query.get_or_404(catid)
 
     # After pressing the button
     if form.validate_on_submit():
@@ -171,7 +171,7 @@ def add_flashcard(id):
 # elegantere Lösung??????
         card = Flashcard(question=form.question.data, 
             answer=form.answer.data,
-            category_id=id, collection_id = collection.name, phase=1)
+            category_id=catid, collection_id = collection.name, phase=1)
 
 
         collection.flashcards.append(card)
@@ -184,7 +184,7 @@ def add_flashcard(id):
         
         # Short notice and redirection to home
         flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(collection.name))        
-        return redirect(url_for('.add_flashcard', id=collection.id))
+        return redirect(url_for('.add_flashcard', id=collection.colid))
     
     # for the template add_flashcard.html
     return render_template('add_flashcard.html', form=form, name=collection.name)
@@ -194,7 +194,7 @@ def add_flashcard(id):
 # *********************************************************************************************************************
 
 
-# Categories filtered by names ****************************************************************************************
+# ????? Categories filtered by names ****************************************************************************************
 @main.route('/get-category', methods=['GET', 'POST'])
 @login_required
 def get_category():
@@ -209,15 +209,20 @@ def get_category():
 @login_required
 def flashcardcollection(id):
     flashcardcollection = Collection.query.get_or_404(id)
-    
-    catid = request.args.get('catid')
-    if catid != 'Null':
-        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
-    elif catid == 'wrong_ones':
-        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
-    else:
-        abort(404)
+
+        catid = request.args.get('catid')
+        if catid != 'Null':
+            flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
+        elif catid == 'wrong_ones':
+            flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
+        else:
+            abort(404)
     return render_template('single_collection.html', flashcardcollection=flashcardcollection)
+
+
+
+
+
 
 # Flashcards for collection colid and category catid **************************************************************
 @main.route('/category/<int:catid>')
