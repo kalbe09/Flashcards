@@ -27,6 +27,7 @@
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('main.user', username=current_user.username) }}">Profil</a></li>
                     {% endif %}
+                    <li><a href="{{ url_for('main.import_collection') }}">Import</a></li>
                     <li><a href="{{ url_for('main.add_collection') }}"><span class="glyphicon glyphicon-plus"></span></a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

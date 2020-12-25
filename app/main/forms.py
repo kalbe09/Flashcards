@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_pagedown.fields import PageDownField
-from wtforms import StringField, SubmitField, BooleanField, DateField, IntegerField
+from wtforms import StringField, SubmitField, BooleanField, DateField, IntegerField, FileField
 from wtforms.validators import DataRequired, Optional
 
 
@@ -29,3 +29,7 @@ class EditFlashcardForm(FlaskForm):
     question = PageDownField('Frage', validators=[DataRequired()])
     answer = PageDownField('Antwort', validators=[DataRequired()])
     submit = SubmitField('Hinzufügen')
+
+class ImportForm(FlaskForm):
+    file = FileField('File')
+    submit = SubmitField('Submit')

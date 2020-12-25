@@ -9,11 +9,13 @@ from ..models.learning import Learning
 from ..models.phasen import Phasen
 from . import main
 from .. import db
-from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm
+from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm, ImportForm
 from random import choice
 import datetime
 import random
-
+import csv
+import pandas as pd
+import os
 
 @main.after_app_request
 def after_request(response):
@@ -281,6 +283,102 @@ def delete_card(collId, cardId):
     db.session.delete(flashcard)
     db.session.commit()
     return redirect(url_for('.flashcardcollection', id=collId))
+
+# *********************************************************************************************************************
+# Export & Import
+# *********************************************************************************************************************
+
+# Export***************************************************************************************************************
+@main.route('/flashcardcollection/<int:colId>/export_collection')
+@login_required
+def export_collection(colId):
+    flashcardcollection = Collection.query.get_or_404(colId)
+    flashcards = flashcardcollection.flashcards.all()
+    # Export will be saved under the name of collection
+    fieldnames = [
+        "id", 
+        "collection_id", 
+        "category_id", 
+        "phase", 
+        "user_id",
+        "question",
+        "question_html",
+        "answer",
+        "answer_html", 
+        "right_answered", 
+        "wrong_answered", 
+        "sum_right_answered", 
+        "sum_wrong_answered",
+        "sum_answered", 
+        "quote",
+        "vote_bad", 
+        "vote_good",
+        "nextdate", 
+        "lastdate",
+        ]
+    file_path = os.path.join(current_app.config['DOWNLOAD_FOLDER'], flashcardcollection.name + '.csv')
+    with open(file_path, mode='w') as csvfile:
+
+        csv_writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(fieldnames)
+        for element in flashcards:
+            csv_writer.writerow([
+                element.id, 
+                element.collection_id,
+                element.category_id,
+                element.phase,
+                element.user_id,
+                element.question,
+                element.question_html,
+                element.answer,
+                element.answer_html,
+                element.right_answered,
+                element.wrong_answered,
+                element.sum_right_answered,
+                element.sum_wrong_answered,
+                element.sum_answered,
+                element.quote,
+                element.vote_bad,
+                element.vote_good,
+                element.nextdate,
+                element.lastdate,
+                ])
+
+    flash("Export erfolgreich")
+    return redirect(url_for('main.index'))
+
+
+
+# Import***************************************************************************************************************
+
+
+# Funktionen vereinen
+@main.route('/import_collection', methods=['GET', 'POST'])
+@login_required
+def import_collection():
+    #form = ImportForm()
+    if request.method == 'POST':
+        uploaded_file = request.files['file']
+        if uploaded_file.filename != '':
+            file_path = os.path.join(current_app.config['DOWNLOAD_FOLDER'], uploaded_file.filename)
+            # set the file path
+            uploaded_file.save(file_path)
+            #flash(file_path)
+            csvData = pd.read_csv(file_path, encoding = "ISO-8859-1")
+            print(csvData)
+            csvData.to_sql("flashcard", con=db.engine, if_exists="append", index=False)
+
+
+            # save the file
+
+
+
+        flash("Import erfolgreich")
+        return redirect(url_for('main.index'))
+    return render_template('import.html')
+    flash("Import erfolgreich")
+    return render_template('import.html')
+
 
 # *********************************************************************************************************************
 # Edit 

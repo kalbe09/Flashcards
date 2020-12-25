@@ -18,6 +18,7 @@ class Config:
     FLASHCARD_MAIL_SUBJECT_PREFIX = '[Flashcard]'
     FLASHCARD_MAIL_SENDER = os.environ.get('FLASHCARD_MAIL_SENDER')
     FLASHCARD_ADMIN = os.environ.get('FLASHCARD_ADMIN')
+    DOWNLOAD_FOLDER = os.path.abspath(os.path.dirname(__file__))
 
 
     @staticmethod
