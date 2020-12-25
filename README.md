@@ -38,30 +38,31 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 3. **Webapplikation / Server starten** <br>
     ```python3 manage.py runserver```
 
-|musst have |should have | could have
 
 
-|musst have    |should have | could have |
-|---|---|---|
-|**Benutzerkonto** || |
-|Erstellen|Bearbeiten|Profilfoto ändern|
-|| Löschen| |
-|| | |
-|**Fach** || |
-|Erstellen| Löschen | |
-||Bearbeiten (Name, Prio, Fälligkeit) | |
-| **Lektionen**|| |
-|Erstellen| Bearbeiten (Name, Prio, Fälligkeit)| Editorleiste|
-||Löschen | |
-|| | |
-|**Kicards** || |
-|Erstellen | Bilder |Mathematische Formeln |
-|Heutige Abfrage| Schlechtesten Karten abfragen | Karten fürs intensivere Lernen auswählen und lernen|
-|**Sonstiges** | | |
-| | Import / Export|Votesystem |
-||||
-||   ||
-|   |   |   |
+# musst have, should & could have
+|musst have         |should have                          | could have            |
+|---                |---                                  |---                    |
+|**Benutzerkonto**  |                                     |                       |
+|Erstellen          |Bearbeiten                           |Profilfoto ändern      |
+|                   | Löschen                             |                       |
+|                   |                                     |                       |
+|**Fach**           |                                     |                       |
+|Erstellen          | Löschen                             |                       |
+|                   |Bearbeiten (Name, Prio, Fälligkeit)  |                       |
+| **Lektionen**     |                                     |                       |
+|Erstellen          | Bearbeiten (Name, Prio, Fälligkeit) | Editorleiste          |
+|                   |Löschen                              |                       |
+|                   |                                     |                       |
+|**Kicards**        |                                     |                       |
+|Erstellen          | Bilder                              |Mathematische Formeln  |
+|Heutige Abfrage    | Schlechtesten Karten abfragen       | Karten fürs intensivere Lernen auswählen und lernen|
+|                   |                                     |                       |
+|**Sonstiges**      |                                     |                       |
+|                   | Import / Export                     |Votesystem             |
+|                   |                                     |                       |
+|                   |                                     |                       |
+|                   |                                     |                       |
 
 
 
@@ -78,29 +79,32 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 
 
 ## Todos
-* Import / Export 
-  - eindeutige IDs um Konflikte zu vermeiden
-  - id: timestamp+colname/ts+col+cat/username/ts+user(cards)
-- Schleife für falsch beantwortete Karten
-- Sicht einzelnes Fach: 
-  - Farben reduzieren
-  - Falsche lernen rausschmeißen wg. Schleife
+- Lernen
+  - Schleife für falsch beantwortete Karten
+  - Frage ob Session wiederholt werden soll
+      - temp save in session['temp_learn']
 
-- doppelte Fragen verhindern
+- Import/Export
+  - Speicherung im Download-Ordner des Browsers (nicht auf Server)
 
-- Offline-Zugriff
-* Import / Export 
+- Delete 
+  - Frage ob Fach/Karte wirklich gelöscht werden soll
+
+- Eingabe 
+  - doppelte Fragen verhindern
 
 - Offline-Zugriff
   - Online-Repositories
   - Lokale Repositories
 
-- Gui: nach Lektionen filtern
+- Lektion/en wählen 
+  - nach einzelne Lektion filtern
   - mehrere Kategorien: select-box
 
-- Order by - Einstellungen Lektion
-  - nach Fälligkeit 
-  - nach Prio
+- Order by 
+  - Einstellungen Lektion/Fach
+    - nach Fälligkeit 
+    - nach Prio
 
 - Editor 
   - Mathematische Formeln eingeben
@@ -148,6 +152,13 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 - phasen-Handling and nextdate
 - Lernmode: Heute
 - lernen: Anzeige der Kategorie, phase (evtl nicht --> Beeinflussung)
+* Import / Export 
+  - eindeutige IDs um Konflikte zu vermeiden
+      - Erstellung nur auf dem Server möglich, daher immer eine eindeutige ID
+- Sicht einzelnes Fach: 
+  - Farben reduzieren
+  - Falsche lernen rausschmeißen wg. Schleife
+
 
 
 ## Funkionen
