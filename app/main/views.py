@@ -171,11 +171,15 @@ def add_flashcard(colid, catid):
 
         # Add attributes to the new collection
 # elegantere Lösung??????
-        card = Flashcard(question=form.question.data, 
+        card = Flashcard(
+            question=form.question.data, 
             answer=form.answer.data,
-            category_id=catid, collection_id = collection.name, phase=1)
-
-
+            category_id=catid, 
+            collection_id = collection.name, 
+            #user_id=current_user,
+            phase=1)
+        card.user = current_user
+        #flash(current_user)
         collection.flashcards.append(card)
         category.flashcards.append(card)
 
