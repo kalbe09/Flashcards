@@ -9,7 +9,7 @@ from ..models.learning import Learning
 from ..models.phasen import Phasen
 from . import main
 from .. import db
-from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm, ImportForm
+from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm, ImportForm, EditCourseForm
 from random import choice
 import datetime
 import random
@@ -37,7 +37,7 @@ def index():
     if current_user.is_authenticated:
         # shows collections ordered by priority
         collections = current_user.collections.order_by(Collection.prio.desc()).all()
-        flashcards = Flashcard.query.all()
+        #flashcards = Flashcard.query.all()
 
         # if phases are not initiated 
         if Phasen.query.first() == None:
@@ -51,7 +51,7 @@ def index():
             db.session.commit()
     else:
         collections = []
-    return render_template('index.html', collections=collections, flashcards=flashcards)
+    return render_template('index.html', collections=collections)#, flashcards=flashcards)
 
 
 
@@ -216,20 +216,19 @@ def get_category():
 
 
 
-# Flashcards for collection id ***************************************************************************************
+# Flashcards for collection and/or category***************************************************************************************
 @main.route('/flashcardcollection/<int:id>/')
 @login_required
 def flashcardcollection(id):
     flashcardcollection = Collection.query.get_or_404(id)
-
     catid = request.args.get('catid')
-    if catid != 'Null':
-        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
-    elif catid == 'wrong_ones':
-        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
+
+    # if no category are selected all kicards are shown
+    if catid == None:
+        flashcards = flashcardcollection.flashcards.all()
     else:
-        abort(404)
-    return render_template('single_collection.html', flashcardcollection=flashcardcollection)
+        flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all()
+    return render_template('single_collection.html', flashcardcollection=flashcardcollection, cards=flashcards, category=catid)
 
 
 
@@ -413,6 +412,8 @@ def edit_flashcard(collId, cardId):
     form.answer.data = flashcard.answer
     return render_template('edit_flashcard.html', form=form, flashcard=flashcard)
 
+
+
 @main.route('/flashcardcollection/<int:collId>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_course(collId):
@@ -495,7 +496,6 @@ def learn(id, flashcards=None):
         sum=session[mode + "len"])
 
 
-
 @main.route('/learning_again?')
 @login_required
 def question_learn_again(collId, cardId):
@@ -551,11 +551,6 @@ def wrong_answer(collId, cardId):
     return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
 
 
-
-
-
-
-
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/right')
 @login_required
 def right_answer(collId, cardId):
@@ -604,6 +599,7 @@ def right_answer(collId, cardId):
     
     # next card
     return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), lencards=lencards, mode=request.args.get('mode')))
+
 
 
 
