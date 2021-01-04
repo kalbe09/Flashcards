@@ -445,15 +445,17 @@ def edit_course(collId):
 @main.route('/flashcardcollection/<int:id>/learn')
 @login_required
 def learn(id, flashcards=None):
+    # Identifies the object flashcardcollection
     flashcardcollection = Collection.query.get_or_404(id)
+    # Identifies the object category
     category = Category.query.get_or_404(id)
  
-    # For the starting of a learning session flashcards == None   
-    if (flashcards == None):
-        mode = request.args.get('mode')
-        now = datetime.datetime.now()
+    mode = request.args.get('mode')
+    now = datetime.datetime.now()
+    # At the beginning of a learning session flashcards == None 
+    
 
-
+    if(mode not in session):
         # Selecting new flashcards
         if mode == 'all':
             flashcards = flashcardcollection.flashcards.filter_by().all()
@@ -462,20 +464,48 @@ def learn(id, flashcards=None):
         elif mode == 'today':
             flashcards = flashcardcollection.flashcards.filter_by(nextdate=datetime.datetime.now().date()).all()   
         elif mode == 'session':
-            flashcards = flashcardcollection.flashcards.filter(Flashcard.id.in_(session["cards"])).all()
-            #flash(flashcards)
+            if "cards" in session:
+                flashcards = flashcardcollection.flashcards.filter(Flashcard.id.in_(session["cards"])).all()
+                if not flashcards:
+                    flash('Keine Kicards in dieser Session vorhanden.')
+                    return redirect(url_for('.question_learn_again'))
         else:
             abort(404)
+
+        # No flashcards available anymore
+        if not flashcards:
+            flash('Keine Kicards in dieser Sektion vorhanden.')
+            return redirect(url_for('.flashcardcollection', id=id))
+        else:
+            session[mode + "len"] = len(flashcards)
+            session[mode] = []    
+            for element in flashcards:
+                session[mode].append(element.id)
+
+    progress= round((session[mode + "len"] - len(session[mode])) / session[mode + "len"] * 100, 2)
+    flashcard = Flashcard.query.get_or_404(random.choice(session[mode]))
     
-    # No flashcards available anymore
-    if not flashcards:
-        flash('Keine Kicards in dieser Sektion vorhanden.')
-        return redirect(url_for('.flashcardcollection', id=id))
-    
-    # If flashcards available choice a random one
-    else:
-        flashcard = random.choice(flashcards)
-    return render_template('learn.html', flashcard=flashcard, flashcards=flashcards, collection=flashcardcollection, category=category)
+    return render_template('learn.html', 
+        flashcard=flashcard, 
+        flashcards=flashcards, 
+        collection=flashcardcollection, 
+        category=category,
+        progress=progress,
+        remain=len(session[mode]),
+        sum=session[mode + "len"])
+
+
+
+@main.route('/learning_again?')
+@login_required
+def question_learn_again(collId, cardId):
+    if form.validate_on_submit():
+        session["cards"] = session["cardstemp"]
+        return redirect(url_for('.learn', id=id))
+    return render_template('learnagain.html')
+
+
+
 
 
 @main.route('/flashcardcollection/<int:id>/reset-cards')
@@ -496,6 +526,7 @@ def reset_cards(id):
 def wrong_answer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
     flashcards = request.args.get('flashcards')
+    
 
     flashcard.wrong_answered = True
     flashcard.right_answered = False
@@ -516,26 +547,50 @@ def wrong_answer(collId, cardId):
     db.session.add(flashcard)
     db.session.commit()
     
-
-
     # next card
-    return redirect(url_for('.learn', id=collId, flashcards=flashcards, mode=request.args.get('mode')))
+    return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
+
+
+
+
+
 
 
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/right')
 @login_required
 def right_answer(collId, cardId):
+    # Identifies the object flashcard
     flashcard = Flashcard.query.get_or_404(cardId)
-    flashcards = request.args.get('flashcards', )
-
+    lencards = request.args.get('lencards')
+    # Identifies the actual mode
+    mode = request.args.get('mode')
     
+
+    # removes the flashcard out of session 
+    session[mode].remove(cardId)
+    
+    
+    # When no cards are in the current session, this session will be delete
+    if(session[mode] == []):
+        session.pop(mode + "len")
+        session.pop(mode)
+        flash("Finish")
+        return redirect(url_for('.flashcardcollection', id=collId))
+    flash(session[mode])
+
+
+    #flashcards = request.args.get('flashcards')
+
+    # Changes attributes of the flashcard
     flashcard.wrong_answered = False
     flashcard.right_answered = True
+    
     flashcard.sum_right_answered += 1
     flashcard.sum_answered +=1
+    
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
-    waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
 
+    waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
     if waitingdays < 7:
         flashcard.phase += 1
 
@@ -547,16 +602,8 @@ def right_answer(collId, cardId):
     db.session.add(flashcard)
     db.session.commit()
     
-
-
-    mode = request.args.get('mode')
-    if mode == "session":
-        session["cards"].remove(flashcard.id)
-        #flash(session["cards"])
-
     # next card
-    return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), mode=request.args.get('mode')))
-
+    return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), lencards=lencards, mode=request.args.get('mode')))
 
 
 
@@ -565,8 +612,10 @@ def right_answer(collId, cardId):
 def add_learningcards(collId, cardId):
     if "cards" not in session:
         session["cards"] = []
+        session["cardstemp"] = []
     if cardId not in session["cards"]:
         session["cards"].append(cardId)
+        session["cardstemp"].append(cardId)
         flash("Karte für die nächste Session hinzugefügt")
     else:
         flash("Karte schon in Session vorhanden")

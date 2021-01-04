@@ -13,6 +13,9 @@
     </div>
     <div class="page-header">
         <h1> Lernbereich von {{ collection.name }} </h1>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:{{progress}}%">{{sum - remain}}/{{sum}}</div>
+        </div> 
     </div>
 
     <div>
