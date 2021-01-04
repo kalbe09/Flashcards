@@ -7,6 +7,10 @@
             <article class="thumbnail">
                 <header>
                     <h3><a href="{{ url_for('.flashcardcollection', id=collection.id) }}">{{ collection.name }}</a></h3>
+                    <a href="{{ url_for('.edit_course', collId=collection.id) }}">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <br>
                     <p class="label label-success">Priorität: {{collection.prio}}</p>
                     <div class="category">
                         {% for category in collection.categories %}
@@ -14,7 +18,7 @@
                         {% endfor %}
                     </div>
                 </header>
-                <p class="flex-text">{{ collection.flashcards.count() }} Kicards</p>
+                <p>Kicards <span class="badge">{{ collection.flashcards.count() }}</span></p> 
                 <div class="delete">
                     <a href="{{ url_for('.export_collection', colId=collection.id) }}">
                         <span class="label label-default ">Export</span>

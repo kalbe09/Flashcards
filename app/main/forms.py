@@ -30,6 +30,13 @@ class EditFlashcardForm(FlaskForm):
     answer = PageDownField('Antwort', validators=[DataRequired()])
     submit = SubmitField('Hinzufügen')
 
+class EditCourseForm(FlaskForm):
+    name = StringField('Name*', validators=[DataRequired()])
+    #category = StringField('Lektion*', validators=[DataRequired()])
+    duedate = DateField('Fälligkeit', format='%d.%m.%Y', validators=[Optional()])
+    prio = IntegerField('Priorität', validators=[Optional()])
+    submit = SubmitField('Hinzufügen')
+
 class ImportForm(FlaskForm):
     file = FileField('File')
     submit = SubmitField('Submit')

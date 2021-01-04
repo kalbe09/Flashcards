@@ -407,7 +407,30 @@ def edit_flashcard(collId, cardId):
     form.answer.data = flashcard.answer
     return render_template('edit_flashcard.html', form=form, flashcard=flashcard)
 
+@main.route('/flashcardcollection/<int:collId>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_course(collId):
+    form = EditCourseForm()
+    flashcardcollection = Collection.query.get_or_404(collId)
 
+
+    if form.validate_on_submit():
+        flashcardcollection.name = form.name.data
+        #flashcardcollection.category = form.category.data
+        flashcardcollection.duedate = form.duedate.data
+        flashcardcollection.prio = form.prio.data
+
+        db.session.add(flashcardcollection)
+        db.session.commit()
+        flash('Course was updated.')
+        return redirect(url_for('.index'))
+
+    form.name.data = flashcardcollection.name
+    #form.category.data = flashcardcollection.category
+    form.duedate.data = flashcardcollection.duedate
+    form.prio.data = flashcardcollection.prio
+
+    return render_template('edit_course.html', form=form, flashcard=flashcard)
 
 # *********************************************************************************************************************
 # Learning 
