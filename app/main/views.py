@@ -164,13 +164,13 @@ def add_flashcard(colid):
 
     # Determine the current collection and category
     collection = Collection.query.get_or_404(colid)
-    category_id = request.args.get('catid')
+    catid = request.args.get('catid')
 
     
     # If a category was choosen, the flashcard can be saved
-    if category_id != None:
+    if catid:
         # to save the flashcard also in table category
-        category = Collection.query.get_or_404(category_id)
+        category = Category.query.get_or_404(catid)
 
         # After pressing the button
         if form.validate_on_submit():
@@ -178,12 +178,10 @@ def add_flashcard(colid):
             card = Flashcard(
                  question=form.question.data, 
                  answer=form.answer.data,
-                 category_id=category_id, 
+                 category_id=catid, 
                  collection_id = collection.id, 
                  phase=1)
             card.user = current_user
-            #collection.flashcards.append(card)
-            #category.flashcards.append(card)
 
             # # update database
             db.session.add(collection)
@@ -192,14 +190,15 @@ def add_flashcard(colid):
         
             # Short notice and redirection to home
             flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(collection.name))        
-            return redirect(url_for('.add_flashcard', colid=collection.id, catid=category_id))
-    else:        
+            return redirect(url_for('.add_flashcard', colid=collection.id, catid=catid))
+    else: 
+        category = None      
         if form.validate_on_submit():
             flash("Du musst eine Kategorie wählen")
 
 
     # for the template add_flashcard.html
-    return render_template('add_flashcard.html', form=form, name=collection.name, col=collection)
+    return render_template('add_flashcard.html', form=form, name=collection.name, collection=collection, category=category)
 
 # *********************************************************************************************************************
 # Get Category
@@ -222,13 +221,14 @@ def get_category():
 def flashcardcollection(id):
     flashcardcollection = Collection.query.get_or_404(id)
     catid = request.args.get('catid')
-
-    # if no category are selected all kicards are shown
-    if catid == None:
-        flashcards = flashcardcollection.flashcards.all()
-    else:
+    
+    if(catid):
+        category = Category.query.get_or_404(catid)
         flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all()
-    return render_template('single_collection.html', flashcardcollection=flashcardcollection, cards=flashcards, category=catid)
+        return render_template('single_collection.html', flashcardcollection=flashcardcollection, cards=flashcards, category=category)
+    else:
+        flashcards = flashcardcollection.flashcards.all()    
+        return render_template('single_collection.html', flashcardcollection=flashcardcollection, cards=flashcards)
 
 
 
