@@ -7,28 +7,39 @@
             <article class="thumbnail">
                 <header>
                     <h3><a href="{{ url_for('.flashcardcollection', id=collection.id) }}">{{ collection.name }}</a></h3>
-                    <a href="{{ url_for('.edit_course', collId=collection.id) }}">
-                        <span class="glyphicon glyphicon-pencil"></span>
-                    </a>
-                    <br>
-                    <p class="label label-success">Priorität: {{collection.prio}}</p>
-                    <div class="category">
-                        {% for category in collection.categories %}
-                            <span class="label label-primary">{{ category.name }}</span>
-                        {% endfor %}
+                    {% for category in collection.categories %}
+                        <span class="label label-primary">{{ category.name }}</span>
+                    {% endfor %}
+                </header> 
+                
+
+                <div class="flex-row row margTop">
+                    <div class="col-xs-6 col-sm-6 col-lg-6">
+                        <p class="label label-default">Priorität: {{collection.prio}}</p>
+                        <p>Kicards <span class="badge">{{ collection.flashcards.count() }}</span></p> 
                     </div>
-                </header>
-                <p>Kicards <span class="badge">{{ collection.flashcards.count() }}</span></p> 
-                <div class="delete">
-                    <a href="{{ url_for('.export_collection', colId=collection.id) }}">
-                        <span class="label label-default ">Export</span>
-                    </a>
+                    <div class="col-xs-6 col-sm-6 col-lg-6">
+                        <button type="button" class="btn">
+                            <span class="glyphicon glyphicon-stats"></span>
+                            </button>
+                    </div>
                 </div>
-                <div class="delete">
-                    <a href="{{ url_for('.delete_flashcardcollection', id=collection.id) }}">
-                        <span class="label label-danger ">Löschen</span>
-                    </a>
+
+                <div class="row margTop">
+                    <div class="col-xs-12 col-sm-12 col-lg-12">
+                        <a href="{{ url_for('.export_collection', colId=collection.id) }}">
+                            <span class="label label-default ">Export</span>
+                        </a>
+                        <a href="{{ url_for('.delete_flashcardcollection', id=collection.id) }}">
+                            <span class="label label-danger ">Löschen</span>
+                        </a>
+                        <a href="{{ url_for('.edit_course', collId=collection.id) }}">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
+
+                    </div>
                 </div>
+                
 
             </article>
         </div>
