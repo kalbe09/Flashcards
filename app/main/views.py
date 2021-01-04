@@ -498,7 +498,8 @@ def learn(id, flashcards=None):
     flashcardcollection = Collection.query.get_or_404(id)
     # Identifies the object category
     category = Category.query.get_or_404(id)
- 
+    
+    catid = request.args.get('catid')
     mode = request.args.get('mode')
     now = datetime.datetime.now()
     # At the beginning of a learning session flashcards == None 
@@ -507,19 +508,28 @@ def learn(id, flashcards=None):
     if(mode not in session):
         # Selecting new flashcards
         if mode == 'all':
-            flashcards = flashcardcollection.flashcards.filter_by().all()
+            if catid:
+                flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all()
+            else: 
+                flashcards = flashcardcollection.flashcards.filter_by().all()
         elif mode == 'bad_ones':
-            flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(50).all()
+            if catid:
+                flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).order_by(Flashcard.quote.asc()).limit(50).all()
+            else:
+                flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(50).all()
         elif mode == 'today':
-            flashcards = flashcardcollection.flashcards.filter_by(nextdate=datetime.datetime.now().date()).all()   
+            if catid:
+                flashcards = flashcardcollection.flashcards.filter_by(category_id=catid, nextdate=datetime.datetime.now().date()).all()   
+            else:
+                flashcards = flashcardcollection.flashcards.filter_by(nextdate=datetime.datetime.now().date()).all()   
         elif mode == 'session':
             if "cards" in session:
                 flashcards = flashcardcollection.flashcards.filter(Flashcard.id.in_(session["cards"])).all()
                 if not flashcards:
                     flash('Keine Kicards in dieser Session vorhanden.')
                     return redirect(url_for('.question_learn_again'))
-        else:
-            abort(404)
+        #else:
+        #    abort(404)
 
         # No flashcards available anymore
         if not flashcards:
@@ -611,18 +621,6 @@ def right_answer(collId, cardId):
 
     # removes the flashcard out of session 
     session[mode].remove(cardId)
-    
-    
-    # When no cards are in the current session, this session will be delete
-    if(session[mode] == []):
-        session.pop(mode + "len")
-        session.pop(mode)
-        flash("Finish")
-        return redirect(url_for('.flashcardcollection', id=collId))
-    flash(session[mode])
-
-
-    #flashcards = request.args.get('flashcards')
 
     # Changes attributes of the flashcard
     flashcard.wrong_answered = False
@@ -634,6 +632,8 @@ def right_answer(collId, cardId):
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
 
     waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
+    flash("waiting: " + str(waitingdays))
+
     if waitingdays < 7:
         flashcard.phase += 1
 
@@ -645,6 +645,15 @@ def right_answer(collId, cardId):
     db.session.add(flashcard)
     db.session.commit()
     
+    
+    # When no cards are in the current session, this session will be delete
+    if(session[mode] == []):
+        session.pop(mode + "len")
+        session.pop(mode)
+        flash("Finish")
+        return redirect(url_for('.flashcardcollection', id=collId))
+    flash(session[mode])
+
     # next card
     return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), lencards=lencards, mode=request.args.get('mode')))
 

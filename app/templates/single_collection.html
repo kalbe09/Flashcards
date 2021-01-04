@@ -51,21 +51,34 @@
         <button type="button" class="btn btn-primary">Session lernen<a href="{{ url_for('.learn', id=flashcardcollection.id, mode='session') }}"></a></button>
     </div> -->
 
-    <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='today') }}">
-        <span class="btn btn-primary btn-learn">Heute</span>
-    </a>
-    <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='all') }}">
-        <span class="btn btn-primary btn-learn">Alle lernen</span>
-    </a>
-    <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='bad_ones') }}">
-        <span class="btn btn-primary btn-learn">Schlechtesten lernen</span>
-    </a>
-    <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='session') }}">
-        <span class="btn btn-primary btn-learn">Session lernen</span>
-    </a>
-    <!-- <a href="{{ url_for('.reset_cards', id=flashcardcollection.id) }}">
-        <span class="btn btn-warning btn-learn">Lernstand zurücksetzen</span>
-    </a> -->
+    {% if category %}
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='today') }}">
+            <span class="btn btn-primary btn-learn">Heute</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='all') }}">
+            <span class="btn btn-primary btn-learn">Alle lernen</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='bad_ones') }}">
+            <span class="btn btn-primary btn-learn">Schlechtesten lernen</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='session') }}">
+            <span class="btn btn-primary btn-learn">Session lernen</span>
+        </a>
+
+    {% else %}
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='today') }}">
+            <span class="btn btn-primary btn-learn">Heute</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='all') }}">
+            <span class="btn btn-primary btn-learn">Alle lernen</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='bad_ones') }}">
+            <span class="btn btn-primary btn-learn">Schlechtesten lernen</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='session') }}">
+            <span class="btn btn-primary btn-learn">Session lernen</span>
+        </a>
+    {% endif %}
     {% include "flashcard_box.html" %}
 
 {% endblock %}
