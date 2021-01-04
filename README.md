@@ -79,6 +79,7 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 
 
 ## Todos
+- rename: course -> cardset -> cards
 - Lernen
   - Schleife für falsch beantwortete Karten
   - Frage ob Session wiederholt werden soll
@@ -86,12 +87,14 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 
 - Import/Export
   - Speicherung im Download-Ordner des Browsers (nicht auf Server)
+  - Nutzung der Forms
+  - Validate Upload
+  - Dropfield
 
 - Delete 
   - Frage ob Fach/Karte wirklich gelöscht werden soll
 
-- Eingabe 
-  - doppelte Fragen verhindern
+
 
 - Offline-Zugriff
   - Online-Repositories
@@ -158,7 +161,9 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 - Sicht einzelnes Fach: 
   - Farben reduzieren
   - Falsche lernen rausschmeißen wg. Schleife
-
+- Eingabe 
+  - user_id
+  - category
 
 
 ## Funkionen
