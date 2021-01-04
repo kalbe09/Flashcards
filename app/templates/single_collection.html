@@ -21,12 +21,23 @@
          -->
         <br>
         <br>
+
+        <!-- <div class="form-group">
+            <label for="exampleFormControlSelect1">Wähle eine Lektion</label>
+            <select class="form-control" id="exampleFormControlSelect1">
+                {% for category in flashcardcollection.categories%}
+                <option><a href="{{ url_for('.flashcardcollection', id=flashcardcollection.id, catid=category.id) }}">{{ category.name }}</a></option>
+                {% endfor %}
+            </select>
+          </div> -->
+
+
         <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Wähle eine Lektion
             <span class="caret"></span></button>
             <ul class="dropdown-menu">
               {% for category in flashcardcollection.categories%}
-              <li><a href="{{ url_for('.flashcardcollection', id=flashcardcollection.id, catid=category.name) }}">{{ category.name }}</a></li>
+              <li><a href="{{ url_for('.flashcardcollection', id=flashcardcollection.id, catid=category.id) }}">{{ category.name }}</a></li>
               {% endfor %}
             </ul>
           </div> 
@@ -37,6 +48,15 @@
         <br>
 
     </div>
+
+    <!-- Buttongruppe
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary">Heute<a href="{{ url_for('.learn', id=flashcardcollection.id, mode='today') }}"></a></button>
+        <button type="button" class="btn btn-primary">Alle lernen<a href="{{ url_for('.learn', id=flashcardcollection.id, mode='all') }}"></a></button>
+        <button type="button" class="btn btn-primary">Schlechtesten lernen<a href="{{ url_for('.learn', id=flashcardcollection.id, mode='bad_ones') }}"></a></button>
+        <button type="button" class="btn btn-primary">Session lernen<a href="{{ url_for('.learn', id=flashcardcollection.id, mode='session') }}"></a></button>
+    </div> -->
+
     <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='today') }}">
         <span class="btn btn-primary btn-learn">Heute</span>
     </a>
