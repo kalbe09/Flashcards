@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Statistik - {{ flashcardcollection.name }}{% endblock %}
+
+{% block page_content %}
+    <div class="page-header">
+        <h1>Statistik für {{ flashcardcollection.name }} </h1>
+        
+    </div>
+    <div class="row margTop">
+        <div class="col-xs-3 col-sm-3 col-lg-3">
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-danger">Phase 1 <span class="badge">{{cards_in_phases["phase1"]|length}}</span></li>
+            <li class="list-group-item list-group-item-danger">Phase 2 <span class="badge">{{cards_in_phases["phase2"]|length}}</span></li>
+            <li class="list-group-item list-group-item-danger">Phase 3 <span class="badge">{{cards_in_phases["phase3"]|length}}</span></li>
+            <li class="list-group-item list-group-item-warning">Phase 4 <span class="badge">{{cards_in_phases["phase4"]|length}}</span></li>
+            <li class="list-group-item list-group-item-warning">Phase 5 <span class="badge">{{cards_in_phases["phase5"]|length}}</span></li>
+            <li class="list-group-item list-group-item-success">Phase 6 <span class="badge">{{cards_in_phases["phase6"]|length}}</span></li>
+            <li class="list-group-item list-group-item-success">Phase 7 <span class="badge">{{cards_in_phases["phase7"]|length}}</span></li>
+          </ul> 
+        </div>
+    </div>
+{% endblock %}

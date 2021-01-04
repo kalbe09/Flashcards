@@ -674,3 +674,29 @@ def add_learningcards(collId, cardId):
         flash("Karte schon in Session vorhanden")
     #flash(session["cards"])
     return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), mode=request.args.get('mode')))
+
+
+
+
+@main.route('/flashcardcollection/<int:collId>/stats/')
+@login_required
+def stats(collId):
+    flashcardcollection = Collection.query.get_or_404(collId)
+
+    # Flashcards in each phases
+    cards_in_phases =	{
+        "phase1": flashcardcollection.flashcards.filter_by(phase=1).all(),
+        "phase2": flashcardcollection.flashcards.filter_by(phase=2).all(),
+        "phase3": flashcardcollection.flashcards.filter_by(phase=3).all(),
+        "phase4": flashcardcollection.flashcards.filter_by(phase=4).all(),
+        "phase5": flashcardcollection.flashcards.filter_by(phase=5).all(),
+        "phase6": flashcardcollection.flashcards.filter_by(phase=6).all(),
+        "phase7": flashcardcollection.flashcards.filter_by(phase=7).all()
+}
+
+
+
+
+    return render_template('statistic.html', 
+        flashcardcollection=flashcardcollection, 
+        cards_in_phases=cards_in_phases)
