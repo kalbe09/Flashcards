@@ -157,43 +157,49 @@ def add_category(id):
        
 # Flashcards************************************************************************************************
 # ADD_FLASHCARD.HTML ******************** 
-@main.route('/add-flashcard/collection/<int:colid>/category/<int:catid>', methods=['GET', 'POST'])
+@main.route('/add-flashcard/collection/<int:colid>', methods=['GET', 'POST'])
 @login_required
-def add_flashcard(colid, catid):
+def add_flashcard(colid):
     form = FlashcardForm()
-    
+
     # Determine the current collection and category
     collection = Collection.query.get_or_404(colid)
-    category = Collection.query.get_or_404(catid)
+    category_id = request.args.get('catid')
 
-    # After pressing the button
-    if form.validate_on_submit():
-
-        # Add attributes to the new collection
-# elegantere Lösung??????
-        card = Flashcard(
-            question=form.question.data, 
-            answer=form.answer.data,
-            category_id=catid, 
-            collection_id = collection.name, 
-            #user_id=current_user,
-            phase=1)
-        card.user = current_user
-        #flash(current_user)
-        collection.flashcards.append(card)
-        category.flashcards.append(card)
-
-        # update database
-        db.session.add(collection)
-        db.session.commit()
-        
-        
-        # Short notice and redirection to home
-        flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(collection.name))        
-        return redirect(url_for('.add_flashcard', colid=collection.id, catid=collection.id))
     
+    # If a category was choosen, the flashcard can be saved
+    if category_id != None:
+        # to save the flashcard also in table category
+        category = Collection.query.get_or_404(category_id)
+
+        # After pressing the button
+        if form.validate_on_submit():
+            # Add attributes to the new collection
+            card = Flashcard(
+                 question=form.question.data, 
+                 answer=form.answer.data,
+                 category_id=category_id, 
+                 collection_id = collection.id, 
+                 phase=1)
+            card.user = current_user
+            #collection.flashcards.append(card)
+            #category.flashcards.append(card)
+
+            # # update database
+            db.session.add(collection)
+            db.session.commit()
+        
+        
+            # Short notice and redirection to home
+            flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(collection.name))        
+            return redirect(url_for('.add_flashcard', colid=collection.id, catid=category_id))
+    else:        
+        if form.validate_on_submit():
+            flash("Du musst eine Kategorie wählen")
+
+
     # for the template add_flashcard.html
-    return render_template('add_flashcard.html', form=form, name=collection.name)
+    return render_template('add_flashcard.html', form=form, name=collection.name, col=collection)
 
 # *********************************************************************************************************************
 # Get Category
