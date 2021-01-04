@@ -9,7 +9,7 @@ from ..models.learning import Learning
 from ..models.phasen import Phasen
 from . import main
 from .. import db
-from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm, ImportForm, EditCourseForm
+from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm, ImportForm, EditCourseForm, EditCategoryForm
 from random import choice
 import datetime
 import random
@@ -280,10 +280,29 @@ def flashcard(collId, cardId):
 @login_required
 def delete_flashcardcollection(id):
     flashcardcollection = Collection.query.get_or_404(id)
+    
+    flashcards = flashcardcollection.flashcards.filter_by(collection_id=id).all()
+    for element in flashcards:
+        db.session.delete(Flashcard.query.get_or_404(element.id))
+    
     db.session.delete(flashcardcollection)
     db.session.commit()
     flash('Fach {0} wurde gelöscht'.format(flashcardcollection.name))
     return redirect(request.referrer)
+
+@main.route('/flashcardcollection/<int:collId>/category/<int:catid>/delete')
+@login_required
+def delete_category(collId, catid):
+    flashcardcollection = Collection.query.get_or_404(collId)
+    category = Category.query.get_or_404(catid)
+    flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all()
+    for element in flashcards:
+        db.session.delete(Flashcard.query.get_or_404(element.id))
+    db.session.delete(category)
+    db.session.commit()
+    flash('Category {0} wurde gelöscht'.format(category.name))
+    return redirect(url_for('.flashcardcollection', id=collId))
+
 
 @main.route('/flashcardcollection/<int:collId>/delete-flashcard/<int:cardId>')
 @login_required
@@ -438,6 +457,35 @@ def edit_course(collId):
     form.prio.data = flashcardcollection.prio
 
     return render_template('edit_course.html', form=form, flashcard=flashcard)
+
+
+@main.route('/flashcardcollection/<int:collId>/category/<int:catid>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_category(collId, catid):
+    form = EditCategoryForm()
+    category = Category.query.get_or_404(catid)
+    #flashcardcollection = Collection.query.get_or_404(collId)
+
+
+    if form.validate_on_submit():
+        category.name = form.name.data
+        #flashcardcollection.category = form.category.data
+        category.duedate = form.duedate.data
+        category.prio = form.prio.data
+
+        db.session.add(category)
+        db.session.commit()
+        flash('Category was updated.')
+        return redirect(url_for('.flashcardcollection', id=collId))
+        
+
+    form.name.data = category.name
+    #form.category.data = flashcardcollection.category
+    form.duedate.data = category.duedate
+    form.prio.data = category.prio
+
+    return render_template('edit_category.html', form=form)
+
 
 # *********************************************************************************************************************
 # Learning 

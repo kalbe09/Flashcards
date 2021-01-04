@@ -21,21 +21,27 @@ class FlashcardCategoryForm(FlaskForm):
 class FlashcardForm(FlaskForm):
     question = PageDownField('Frage', validators=[DataRequired()])
     answer = PageDownField('Antwort', validators=[DataRequired()])
-    #next = BooleanField('Nächste Karte?')
     submit = SubmitField('Hinzufügen')
 
+
+
+
+class EditCourseForm(FlaskForm):
+    name = StringField('Name*', validators=[DataRequired()])
+    duedate = DateField('Fälligkeit', format='%d.%m.%Y', validators=[Optional()])
+    prio = IntegerField('Priorität', validators=[Optional()])
+    submit = SubmitField('Ändern')
+
+class EditCategoryForm(FlaskForm):
+    name = StringField('Name*', validators=[DataRequired()])
+    duedate = DateField('Fälligkeit', format='%d.%m.%Y', validators=[Optional()])
+    prio = IntegerField('Priorität', validators=[Optional()])
+    submit = SubmitField('Ändern')
 
 class EditFlashcardForm(FlaskForm):
     question = PageDownField('Frage', validators=[DataRequired()])
     answer = PageDownField('Antwort', validators=[DataRequired()])
-    submit = SubmitField('Hinzufügen')
-
-class EditCourseForm(FlaskForm):
-    name = StringField('Name*', validators=[DataRequired()])
-    #category = StringField('Lektion*', validators=[DataRequired()])
-    duedate = DateField('Fälligkeit', format='%d.%m.%Y', validators=[Optional()])
-    prio = IntegerField('Priorität', validators=[Optional()])
-    submit = SubmitField('Hinzufügen')
+    submit = SubmitField('Ändern')
 
 class ImportForm(FlaskForm):
     file = FileField('File')

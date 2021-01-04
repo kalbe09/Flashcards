@@ -10,18 +10,8 @@
         {% if flashcardcollection.duedate != None %}
         <p class="label label-default">Fälligkeitstermin: {{ flashcardcollection.duedate }} </p>
         {% endif %}
-        <div class="margTop">
-            <p class="label label-default">{{ flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).count() }} Kicards</p>
-            <p class="label label-danger">{{ flashcardcollection.flashcards.filter_by(wrong_answered=True).count() }} Falsch</p>
-            <p class="label label-success">{{ flashcardcollection.flashcards.filter_by(right_answered=True).count() }} Richtig</p>
-        </div>
-
-
-        <!-- <div class="margTop"></div>
-         -->
+        
         <br>
-        <br>
-
 
 
 
@@ -38,14 +28,19 @@
                     <li><a href="{{ url_for('.flashcardcollection', id=flashcardcollection.id, catid=category.id) }}">{{ category.name }}</a></li>
                 {% endfor %}
             </ul>
-        </div> 
-        
-        <a href="{{ url_for('.add_category', id=flashcardcollection.id) }}">
-            <span class="label label-default">Lektion hinzufügen</span></a>
-        
-        </a>
-        <br>
+            {% if category %}
+            <button type="button" class="btn btn-default">
+                <a href="{{ url_for('.edit_category', collId=flashcardcollection.id, catid=category.id) }}"><span class="glyphicon glyphicon-pencil"></span></a>
+            </button>
+            <button type="button" class="btn btn-default">
+                <a href="{{ url_for('.delete_category', collId=flashcardcollection.id, catid=category.id) }}"><span class="glyphicon glyphicon-trash"></span></a>
+            </button>
+            {% endif %}
+            <button type="button" class="btn btn-default">
+                <a href="{{ url_for('.add_category', id=flashcardcollection.id) }}">Lektion hinzufügen</a>
+            </button>
 
+        </div> 
     </div>
 
     <!-- Buttongruppe
