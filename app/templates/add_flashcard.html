@@ -7,6 +7,15 @@
     <div class="page-header">
         <h1>Füge Karte zu {{ name }} hinzu</h1>
     </div>
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Wähle eine Lektion
+        <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+          {% for category in col.categories%}
+          <li><a href="{{ url_for('.add_flashcard', colid=col.id, catid=category.id) }}">{{ category.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div> 
     <div>{{ wtf.quick_form(form) }}</div>
 {% endblock %}
 

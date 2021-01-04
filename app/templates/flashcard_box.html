@@ -1,5 +1,5 @@
 <div class="flex-row row">
-    {% for flashcard in flashcardcollection.flashcards %}
+    {% for flashcard in cards %}
         <div class="col-xs-12 col-sm-4 col-lg-3">
             <article class="thumbnail">
                 <header>
@@ -37,8 +37,7 @@
                   {% endfor %}
                 </ul>
               </div>  -->
-
-            <a href="{{ url_for('.add_flashcard', colid=flashcardcollection.id, catid=1) }}" class="newCollection">
+            <a href="{{ url_for('.add_flashcard', colid=flashcardcollection.id) }}" class="newCollection">
                 <span class="glyphicon glyphicon-plus"></span>
             </a>
 
