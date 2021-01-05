@@ -94,7 +94,12 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 - Delete 
   - Frage ob Fach/Karte wirklich gelöscht werden soll
 
-
+	- Wenn eine Lernsession begonnen wurde und zurückgeht, dann eine Kategorie auswählt muss man erst die Session beenden
+  
+	- Images: 
+		- Einschränkung auf jpg
+		- Speicherung nicht in static
+    - Bilder löschen, wenn Karte gelöscht wird
 
 - Offline-Zugriff
   - Online-Repositories
