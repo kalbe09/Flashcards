@@ -17,6 +17,7 @@ import csv
 import pandas as pd
 import os
 
+
 @main.after_app_request
 def after_request(response):
     for query in get_debug_queries():
@@ -275,6 +276,16 @@ def flashcard(collId, cardId):
 # *********************************************************************************************************************
 # Delete 
 # *********************************************************************************************************************
+
+@main.route('/user/<int:id>/delete')
+@login_required
+def delete_user(id):
+    user = User.query.get_or_404(id)
+    
+    db.session.delete(user)
+    db.session.commit()
+    flash('User {0} wurde gelöscht'.format(user.username))
+    return redirect(url_for('auth.logout'))
 
 @main.route('/flashcardcollection/<int:id>/delete')
 @login_required
@@ -692,11 +703,12 @@ def stats(collId):
         "phase5": flashcardcollection.flashcards.filter_by(phase=5).all(),
         "phase6": flashcardcollection.flashcards.filter_by(phase=6).all(),
         "phase7": flashcardcollection.flashcards.filter_by(phase=7).all()
-}
-
+    }
 
 
 
     return render_template('statistic.html', 
         flashcardcollection=flashcardcollection, 
         cards_in_phases=cards_in_phases)
+
+        
