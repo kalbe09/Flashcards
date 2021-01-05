@@ -10,7 +10,8 @@
             <span class="glyphicon glyphicon-pencil"></span>
         </a>
     </div>
-    <div>
+    <div class="flex-row row margTop">
+        <div class="col-xs-6 col-sm-6 col-lg-6">
         <h2>Frage</h2>
         <div class="flashcard-body">
             {% if flashcard.question_html %}
@@ -26,6 +27,11 @@
             {% else %}
                 <p>{{ flashcard.answer }}</p>
             {% endif %}
+        </div>
+
+        {% if img_name %}
+            <img src="{{url_for('static', filename='flashcard_img/' + img_name)}}" align="middle" />
+        {% endif %}
         </div>
     </div>
 {% endblock %}

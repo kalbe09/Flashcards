@@ -21,6 +21,7 @@ class FlashcardCategoryForm(FlaskForm):
 class FlashcardForm(FlaskForm):
     question = PageDownField('Frage', validators=[DataRequired()])
     answer = PageDownField('Antwort', validators=[DataRequired()])
+    photo = FileField('Bild', validators=[Optional()])
     submit = SubmitField('Hinzufügen')
 
 

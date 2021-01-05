@@ -16,7 +16,7 @@ import random
 import csv
 import pandas as pd
 import os
-
+from PIL import Image
 
 @main.after_app_request
 def after_request(response):
@@ -175,6 +175,9 @@ def add_flashcard(colid):
 
         # After pressing the button
         if form.validate_on_submit():
+            filename, file_extension = os.path.splitext(form.photo.data.filename)
+            flash(file_extension)
+            
             # Add attributes to the new collection
             card = Flashcard(
                  question=form.question.data, 
@@ -182,13 +185,15 @@ def add_flashcard(colid):
                  category_id=catid, 
                  collection_id = collection.id, 
                  phase=1)
+             
+            
             card.user = current_user
 
             # # update database
             db.session.add(collection)
             db.session.commit()
         
-        
+            form.photo.data.save("app/static/flashcard_img/" + str(card.id) + file_extension)
             # Short notice and redirection to home
             flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(collection.name))        
             return redirect(url_for('.add_flashcard', colid=collection.id, catid=catid))
@@ -268,9 +273,18 @@ def flashcardcategory(collId, catid):
 def flashcard(collId, cardId):
     flashcardcollection = Collection.query.get_or_404(collId)
     flashcard = flashcardcollection.flashcards.filter_by(id=cardId).first()
+
     if flashcard is None:
         abort(404)
-    return render_template('flashcard.html', flashcardcollection=flashcardcollection, flashcard=flashcard)
+
+    if os.path.exists("app/static/flashcard_img/" +str(cardId) + ".jpg"):
+        img = Image.open("app/static/flashcard_img/" +str(cardId) + ".jpg")
+        #img.show()
+        img_name = str(cardId) + ".jpg"
+        
+        return render_template('flashcard.html', flashcardcollection=flashcardcollection, flashcard=flashcard, img=img, img_name=img_name)
+    else:
+        return render_template('flashcard.html', flashcardcollection=flashcardcollection, flashcard=flashcard)
 
 
 # *********************************************************************************************************************
@@ -555,14 +569,28 @@ def learn(id, flashcards=None):
     progress= round((session[mode + "len"] - len(session[mode])) / session[mode + "len"] * 100, 2)
     flashcard = Flashcard.query.get_or_404(random.choice(session[mode]))
     
-    return render_template('learn.html', 
-        flashcard=flashcard, 
-        flashcards=flashcards, 
-        collection=flashcardcollection, 
-        category=category,
-        progress=progress,
-        remain=len(session[mode]),
-        sum=session[mode + "len"])
+    if os.path.exists("app/static/flashcard_img/" +str(flashcard.id) + ".jpg"):
+        img = Image.open("app/static/flashcard_img/" +str(flashcard.id) + ".jpg")
+        img_name = str(flashcard.id) + ".jpg"
+        
+        return render_template('learn.html', 
+            flashcard=flashcard, 
+            flashcards=flashcards, 
+            collection=flashcardcollection, 
+            category=category,
+            progress=progress,
+            remain=len(session[mode]),
+            sum=session[mode + "len"],
+            img=img, img_name=img_name)
+    else:
+        return render_template('learn.html', 
+            flashcard=flashcard, 
+            flashcards=flashcards, 
+            collection=flashcardcollection, 
+            category=category,
+            progress=progress,
+            remain=len(session[mode]),
+            sum=session[mode + "len"])
 
 
 @main.route('/learning_again?')
