@@ -76,14 +76,29 @@
             <div class="row margTop">
                 <div class="col-xs-6 col-sm-6 col-lg-6">
                     <div class="row-12 choiseBtn floatright">
-                        <div class="col-xs-5 col-md-5">
-                            <a href="{{ url_for('.wrong_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"> <span
-                                    class="btn btn-danger"><i class="fa fa-frown-o"></i>Falsch</span></a>
-                        </div>
-                        <div class="col-xs-5 col-md-5">
-                            <a href="{{ url_for('.right_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
-                                    class="btn btn-success"><i class="fa fa-smile-o"></i>Richtig</span></a>
-                        </div>
+                        {% if mode == 'spaced' %}
+                            <div class="col-xs-4 col-md-4">
+                                <a href="{{ url_for('.hard_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"> <span
+                                        class="btn btn-danger"><i class="fa fa-frown-o"></i>Schwer</span></a>
+                            </div>
+                            <div class="col-xs-4 col-md-4">
+                                <a href="{{ url_for('.middle_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
+                                        class="btn btn-warning"><i class="fa fa-smile-o"></i>Mittel</span></a>
+                            </div>
+                            <div class="col-xs-4 col-md-4">
+                                <a href="{{ url_for('.easy_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
+                                        class="btn btn-success"><i class="fa fa-smile-o"></i>Einfach</span></a>
+                            </div>
+                        {% else %}
+                            <div class="col-xs-5 col-md-5">
+                                <a href="{{ url_for('.wrong_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"> <span
+                                        class="btn btn-danger"><i class="fa fa-frown-o"></i>Falsch</span></a>
+                            </div>
+                            <div class="col-xs-5 col-md-5">
+                                <a href="{{ url_for('.right_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
+                                        class="btn btn-success"><i class="fa fa-smile-o"></i>Richtig</span></a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

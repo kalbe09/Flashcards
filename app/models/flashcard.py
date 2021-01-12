@@ -29,7 +29,11 @@ class Flashcard(db.Model):
     vote_good = db.Column(db.Integer, default=0)
 
 #    phase = db.Column(db.Integer, default=0)
-    nextdate = db.Column(db.Text, default=datetime.datetime.now().date())# + datetime.timedelta(days=1)).strftime("%d.%m.%Y"))
+    nextdateLeitner = db.Column(db.Text, default=datetime.datetime.now().date())# + datetime.timedelta(days=1)).strftime("%d.%m.%Y"))
+    nextdateSpaced = db.Column(db.Text, default=datetime.datetime.now())# + datetime.timedelta(days=1)).strftime("%d.%m.%Y"))
+    lastdate = db.Column(db.Text, default=datetime.datetime.now().date())#.strftime("%d.%m.%Y"))
+
+
     lastdate = db.Column(db.Text, default=datetime.datetime.now().date())#.strftime("%d.%m.%Y"))
 
 

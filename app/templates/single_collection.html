@@ -52,11 +52,14 @@
     </div> -->
 
     {% if category %}
-        <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='today') }}">
-            <span class="btn btn-primary btn-learn">Heute</span>
-        </a>
         <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='all') }}">
             <span class="btn btn-primary btn-learn">Alle lernen</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='leitner') }}">
+            <span class="btn btn-primary btn-learn">Heute im Leitnermodus</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='spaced') }}">
+            <span class="btn btn-primary btn-learn">Heute im Spaced Modus</span>
         </a>
         <a href="{{ url_for('.learn', id=flashcardcollection.id, catid=category.id, mode='bad_ones') }}">
             <span class="btn btn-primary btn-learn">Schlechtesten lernen</span>
@@ -66,11 +69,14 @@
         </a>
 
     {% else %}
-        <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='today') }}">
-            <span class="btn btn-primary btn-learn">Heute</span>
-        </a>
         <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='all') }}">
-            <span class="btn btn-primary btn-learn">Alle lernen</span>
+            <span class="btn btn-primary btn-learn">Alle</span>
+        </a>
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='leitner') }}">
+            <span class="btn btn-primary btn-learn">Heute im Leitnermodus</span>
+        </a>        
+        <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='spaced') }}">
+            <span class="btn btn-primary btn-learn">Heute im Spacedmodus</span>
         </a>
         <a href="{{ url_for('.learn', id=flashcardcollection.id, mode='bad_ones') }}">
             <span class="btn btn-primary btn-learn">Schlechtesten lernen</span>

@@ -7,12 +7,14 @@ class Collection(db.Model):
     __tablename__ = 'flashcardcollection'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
     
     duedate = db.Column(db.Text)
     prio = db.Column(db.Integer, default=0)
     activ = db.Column(db.Boolean, default=True)
     
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     flashcards = db.relationship('Flashcard', backref='collection', lazy='dynamic')
     categories = db.relationship('Category',
                                  secondary=has_category,

@@ -5,19 +5,21 @@ from ..models.users import User
 from ..models.category import Category
 from ..models.flashcard_collections import Collection
 from ..models.flashcard import Flashcard
-from ..models.learning import Learning
 from ..models.phasen import Phasen
 from . import main
 from .. import db
 from .forms import CollectionForm, FlashcardForm, EditFlashcardForm, FlashcardCategoryForm, ImportForm, EditCourseForm, EditCategoryForm
 from random import choice
+import pandas as pd
 import datetime
 import random
 import csv
-import pandas as pd
 import os
 from PIL import Image
 
+
+
+# Handling slow query time
 @main.after_app_request
 def after_request(response):
     for query in get_debug_queries():
@@ -43,15 +45,17 @@ def index():
         # if phases are not initiated 
         if Phasen.query.first() == None:
             db.session.add(Phasen(waiting_days=0))
+            db.session.add(Phasen(waiting_days=1))
             db.session.add(Phasen(waiting_days=2))
-            db.session.add(Phasen(waiting_days=4))
-            db.session.add(Phasen(waiting_days=6))
-            db.session.add(Phasen(waiting_days=7))
             db.session.add(Phasen(waiting_days=8))
-            db.session.add(Phasen(waiting_days=9))
+            db.session.add(Phasen(waiting_days=32))
+            db.session.add(Phasen(waiting_days=64))
+            db.session.add(Phasen(waiting_days=128))
             db.session.commit()
+    
     else:
         collections = []
+    
     return render_template('index.html', collections=collections)#, flashcards=flashcards)
 
 
@@ -61,47 +65,52 @@ def index():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first()
+    
     if user is None:
         abort(404)
+    
+    # Identifies all Collections for the user
     collections = current_user.collections.order_by(Collection.prio.desc()).all()
+
     return render_template('user.html', user=user, collections=collections)
 
 
 
-
 # *********************************************************************************************************************
-# Add Collections, Categories, Flashcards
+# *********************************************************************************************************************
+# Adding Collections, Categories, Flashcards
+# *********************************************************************************************************************
 # *********************************************************************************************************************
 
-# Collections***********************************************************************************************************
-# ADD_Collection.HTML ******************** 
+# ADD_Collection.HTML ************************************************************************************************* 
 @main.route('/add-collection', methods=['GET', 'POST'])
 @login_required
 def add_collection():
+    # Shows the formular specified in main.forms
     form = CollectionForm()
     
-    # After pressing the submit button
+    # POST: After pressing the submit button
     if form.validate_on_submit():
         
-        # identify the current date
-        now = datetime.datetime.now()
-        now = datetime.date(now.year, now.month, now.day)
+        # Identify the current date in yyyy.mm.dd
+        date = datetime.datetime.now()
+        formatted_date = datetime.date(date.year, date.month, date.day)
 
-        # Validate entered duedate
+        # Validate duedate
         if form.duedate.data != None:
-            if form.duedate.data < now:
+            if form.duedate.data < formatted_date:
                 flash("Der Fälligkeitstermin liegt in der Vergangenheit")
                 return render_template('add_collection.html', form=form)            
-            
-        # if the category does not exist, save all entered data in a new object category
-# ACHTUNG: Schaut für alle Collections
-        category = Category.query.filter_by(name=form.category.data).first()
-        if category is None:
-            category = Category(name=form.category.data, duedate=form.duedate.data)
+                    
             
         # Add attributes to the new collection
         collection = Collection(name=form.name.data, duedate=form.duedate.data, prio=form.prio.data)
+        
+        # Create and add Category
+        category = Category(name=form.category.data, duedate=form.duedate.data)
         collection.categories.append(category)
+        
+        # Add user
         collection.user = current_user
 
         # update database
@@ -112,71 +121,72 @@ def add_collection():
         flash('Fach hinzugefügt')
 
         return redirect(url_for('.index'))
-    # for the template add_collection.html
+
     return render_template('add_collection.html', form=form)
 
 
 
 
-# Categories********************************************************************************************
-# ADD_CATEGORY.HTML ******************** 
+
+# ADD_CATEGORY.HTML ***************************************************************************** 
 @main.route('/add-category/collection/<int:id>', methods=['GET', 'POST'])
 @login_required
 def add_category(id):
+    # Shows the formular specified in main.forms
     form = FlashcardCategoryForm()
     
-    # Determine the current collection
+    # Select the collection
     flashcardcollection = Collection.query.get_or_404(id)
     
-    # After pressing the button
+    # Post: Pressing button
     if form.validate_on_submit():
-        now = datetime.datetime.now()
-        now = datetime.date(now.year, now.month, now.day)
+
+        date = datetime.datetime.now()
+        formatted_date = datetime.date(date.year, date.month, date.day)
         
         # Validate entered duedate
         if form.duedate.data != None:
-            if form.duedate.data < now:
+            if form.duedate.data < formatted_date:
                 flash("Der Fälligkeitstermin liegt in der Vergangenheit")
                 return render_template('add_category.html', form=form, name=flashcardcollection.name)
         
-        # create new category and put it in the list of his collection
+        # New category 
         category = Category(name=form.name.data, duedate=form.duedate.data, prio=form.prio.data)
+        
+        # Add to collection
         flashcardcollection.categories.append(category)
         
-        # update database
+        # Update database
         db.session.add(flashcardcollection)
         db.session.commit()
         
-        # Short notice and redirection to home
         flash('Lektion hinzugefügt')
+        
         return redirect(url_for('.flashcardcollection', id=flashcardcollection.id))
-        # for the template add_category.html
+        
     return render_template('add_category.html', form=form, name=flashcardcollection.name)
         
         
         
        
-# Flashcards************************************************************************************************
 # ADD_FLASHCARD.HTML ******************** 
 @main.route('/add-flashcard/collection/<int:colid>', methods=['GET', 'POST'])
 @login_required
 def add_flashcard(colid):
+    # Shows the formular specified in main.forms
     form = FlashcardForm()
 
-    # Determine the current collection and category
+    # Determine the current collection and category_id
     collection = Collection.query.get_or_404(colid)
     catid = request.args.get('catid')
 
     
-    # If a category was choosen, the flashcard can be saved
+    # If category was choosen, the flashcard can be saved
     if catid:
-        # to save the flashcard also in table category
         category = Category.query.get_or_404(catid)
 
         # After pressing the button
         if form.validate_on_submit():
-            filename, file_extension = os.path.splitext(form.photo.data.filename)
-            flash(file_extension)
             
             # Add attributes to the new collection
             card = Flashcard(
@@ -186,103 +196,98 @@ def add_flashcard(colid):
                  collection_id = collection.id, 
                  phase=1)
              
-            
             card.user = current_user
 
             # # update database
             db.session.add(collection)
             db.session.commit()
         
+            # Image saving
+            # Extract the file extension
+            filename, file_extension = os.path.splitext(form.photo.data.filename)
+
+# url_for
             form.photo.data.save("app/static/flashcard_img/" + str(card.id) + file_extension)
-            # Short notice and redirection to home
+            
             flash('Karteikarte wurde zum Fach {0} hinzugefügt'.format(collection.name))        
             return redirect(url_for('.add_flashcard', colid=collection.id, catid=catid))
+    
+    # If Category was not choosen
     else: 
         category = None      
         if form.validate_on_submit():
             flash("Du musst eine Kategorie wählen")
 
 
-    # for the template add_flashcard.html
     return render_template('add_flashcard.html', form=form, name=collection.name, collection=collection, category=category)
 
+
+
+
+
+
 # *********************************************************************************************************************
-# Get Category
+# Get 
 # *********************************************************************************************************************
 
-
-# ????? Categories filtered by names ****************************************************************************************
-@main.route('/get-category', methods=['GET', 'POST'])
-@login_required
-def get_category():
-    return jsonify({
-        'category': [category.name for category in Category.query.order_by(Category.name).all()]
-    })
-
-
-
-# Flashcards for collection and/or category***************************************************************************************
+# single_collection.html ****************************************************************************************************
+# Cards for collection and/or category***************************************************************************************
 @main.route('/flashcardcollection/<int:id>/')
 @login_required
 def flashcardcollection(id):
     flashcardcollection = Collection.query.get_or_404(id)
     catid = request.args.get('catid')
     
+    # cards for a category
     if(catid):
         category = Category.query.get_or_404(catid)
         flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all()
+        
         return render_template('single_collection.html', flashcardcollection=flashcardcollection, cards=flashcards, category=category)
+    
+    # all cards in collection
     else:
         flashcards = flashcardcollection.flashcards.all()    
+        
         return render_template('single_collection.html', flashcardcollection=flashcardcollection, cards=flashcards)
 
 
 
-
-
-
-# Flashcards for collection colid and category catid **************************************************************
-@main.route('/category/<int:catid>')
-@login_required
-def getcards_catid(catid):
-    category = Category.query.get_or_404(catid)
-    flashcards = category.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
-
-    #catid = request.args.get('catid')
-    if catid != 'Null':
-        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=False, right_answered=False).all()
-    elif catid == 'wrong_ones':
-        flashcards = flashcardcollection.flashcards.filter_by(wrong_answered=True, right_answered=False).all()
-    else:
-        abort(404)
-    return render_template('single_collection.html', flashcardcollection=flashcardcollection)
-
-
+# flashcardcategory.html ***************************************************************************************
 # Categories for collection id**********************************************************************************
 @main.route('/flashcardcategory/<int:id>')
 @login_required
 def flashcardcategory(collId, catid):
     flashcardcollection = Collection.query.get_or_404(collId)
     category = flashcardcollection.categories.filter_by(id=catid).first()
+
     return render_template('flashcardcategory.html', flashcardcollection=flashcardcollection, Category=category)
 
 
-# Single flashcard for collection id ****************************************************************************************
+
+
+# flashcard.html ***************************************************************************************
+# Cards  ***********************************************************************************************
 @main.route('/flashcardcollection/<int:collId>/flashcard/<int:cardId>')
 @login_required
 def flashcard(collId, cardId):
+
+    # Collect cards for collection and category
     flashcardcollection = Collection.query.get_or_404(collId)
     flashcard = flashcardcollection.flashcards.filter_by(id=cardId).first()
 
     if flashcard is None:
         abort(404)
 
+    # Load image
     if os.path.exists("app/static/flashcard_img/" +str(cardId) + ".jpg"):
+        
         img = Image.open("app/static/flashcard_img/" +str(cardId) + ".jpg")
-        #img.show()
         img_name = str(cardId) + ".jpg"
         
         return render_template('flashcard.html', flashcardcollection=flashcardcollection, flashcard=flashcard, img=img, img_name=img_name)
+    
+    # Without image
     else:
         return render_template('flashcard.html', flashcardcollection=flashcardcollection, flashcard=flashcard)
 
@@ -291,6 +296,7 @@ def flashcard(collId, cardId):
 # Delete 
 # *********************************************************************************************************************
 
+# Delete User ********************************************************************************************************
 @main.route('/user/<int:id>/delete')
 @login_required
 def delete_user(id):
@@ -299,43 +305,89 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     flash('User {0} wurde gelöscht'.format(user.username))
+    
     return redirect(url_for('auth.logout'))
 
+
+
+
+# Delete Collection ********************************************************************************************************
 @main.route('/flashcardcollection/<int:id>/delete')
 @login_required
 def delete_flashcardcollection(id):
+
+    # Select collecttion and all flashcards
     flashcardcollection = Collection.query.get_or_404(id)
-    
-    flashcards = flashcardcollection.flashcards.filter_by(collection_id=id).all()
+    flashcards = flashcardcollection.flashcards.all()
+    categories = flashcardcollection.categories.all()
+
+    # Delete cards
     for element in flashcards:
         db.session.delete(Flashcard.query.get_or_404(element.id))
     
+    # Delete Categories
+    for element in categories:
+        db.session.delete(Category.query.get_or_404(element.id))
+
+    # Delete Collection
     db.session.delete(flashcardcollection)
+    
     db.session.commit()
+    
     flash('Fach {0} wurde gelöscht'.format(flashcardcollection.name))
+    
     return redirect(request.referrer)
 
+
+
+
+
+
+# Delete Category ********************************************************************************************************
 @main.route('/flashcardcollection/<int:collId>/category/<int:catid>/delete')
 @login_required
 def delete_category(collId, catid):
     flashcardcollection = Collection.query.get_or_404(collId)
     category = Category.query.get_or_404(catid)
     flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all()
+
+    # Delete cards
     for element in flashcards:
         db.session.delete(Flashcard.query.get_or_404(element.id))
+    
+    # Delete category
     db.session.delete(category)
+    
     db.session.commit()
     flash('Category {0} wurde gelöscht'.format(category.name))
+    
     return redirect(url_for('.flashcardcollection', id=collId))
 
 
+
+
+
+# Delete Card ********************************************************************************************************
 @main.route('/flashcardcollection/<int:collId>/delete-flashcard/<int:cardId>')
 @login_required
 def delete_card(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
     db.session.delete(flashcard)
     db.session.commit()
+
     return redirect(url_for('.flashcardcollection', id=collId))
+
+
+
+
+
+
+
+
+
+
+
+
 
 # *********************************************************************************************************************
 # Export & Import
@@ -347,36 +399,25 @@ def delete_card(collId, cardId):
 def export_collection(colId):
     flashcardcollection = Collection.query.get_or_404(colId)
     flashcards = flashcardcollection.flashcards.all()
-    # Export will be saved under the name of collection
-    fieldnames = [
-        "id", 
-        "collection_id", 
-        "category_id", 
-        "phase", 
-        "user_id",
-        "question",
-        "question_html",
-        "answer",
-        "answer_html", 
-        "right_answered", 
-        "wrong_answered", 
-        "sum_right_answered", 
-        "sum_wrong_answered",
-        "sum_answered", 
-        "quote",
-        "vote_bad", 
-        "vote_good",
-        "nextdate", 
-        "lastdate",
-        ]
-    file_path = os.path.join(current_app.config['DOWNLOAD_FOLDER'], flashcardcollection.name + '.csv')
-    with open(file_path, mode='w') as csvfile:
 
+    # Export will be saved under the name of the collection
+    columns = [m.key for m in Flashcard.__table__.columns]
+    
+    # Exclude the first id's
+    del columns[:1]
+    
+    # Select the download-path
+    file_path = os.path.join(current_app.config['DOWNLOAD_FOLDER'], flashcardcollection.name + '.csv')
+    
+    with open(file_path, mode='w') as csvfile:
         csv_writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        csv_writer.writerow(fieldnames)
+        
+        # Writes the fieldnames first
+        csv_writer.writerow(columns)
+        
         for element in flashcards:
             csv_writer.writerow([
-                element.id, 
+                #element.id, 
                 element.collection_id,
                 element.category_id,
                 element.phase,
@@ -393,11 +434,12 @@ def export_collection(colId):
                 element.quote,
                 element.vote_bad,
                 element.vote_good,
-                element.nextdate,
+                element.nextdateLeitner,
+                element.nextdateSpaced,
                 element.lastdate,
                 ])
 
-    flash("Export erfolgreich")
+    flash("Erfolgreich! Speicherung unter: " + current_app.config['DOWNLOAD_FOLDER'])
     return redirect(url_for('main.index'))
 
 
@@ -410,26 +452,25 @@ def export_collection(colId):
 @login_required
 def import_collection():
     #form = ImportForm()
+    
     if request.method == 'POST':
+        
+        # Select the inserted file
         uploaded_file = request.files['file']
-        if uploaded_file.filename != '':
-            file_path = os.path.join(current_app.config['DOWNLOAD_FOLDER'], uploaded_file.filename)
-            # set the file path
-            uploaded_file.save(file_path)
-            #flash(file_path)
-            csvData = pd.read_csv(file_path, encoding = "ISO-8859-1")
-            print(csvData)
+    
+        # if uploaded_file
+        if uploaded_file: #.filename != '':
+
+            # Save Collection 
+
+            # Save Category
+            
+            # Save flashcard            
+            csvData = pd.read_csv(uploaded_file, encoding = "UTF-8") # ISO-8859-1        
             csvData.to_sql("flashcard", con=db.engine, if_exists="append", index=False)
 
-
-            # save the file
-
-
-
-        flash("Import erfolgreich")
-        return redirect(url_for('main.index'))
-    return render_template('import.html')
-    flash("Import erfolgreich")
+            flash("Import erfolgreich")
+            return redirect(url_for('main.index'))
     return render_template('import.html')
 
 
@@ -530,6 +571,8 @@ def learn(id, flashcards=None):
     # At the beginning of a learning session flashcards == None 
     
 
+    #session.pop(mode)
+    #flash(mode in session)
     if(mode not in session):
         # Selecting new flashcards
         if mode == 'all':
@@ -541,34 +584,60 @@ def learn(id, flashcards=None):
             if catid:
                 flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).order_by(Flashcard.quote.asc()).limit(50).all()
             else:
-                flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(50).all()
-        elif mode == 'today':
+                flashcards = flashcardcollection.flashcards.order_by(Flashcard.quote.asc()).limit(10).all()
+
+        elif mode == 'leitner':
             if catid:
-                flashcards = flashcardcollection.flashcards.filter_by(category_id=catid, nextdate=datetime.datetime.now().date()).all()   
+                temp_flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all() 
+                flashcards = temp_flashcards.filter(Flashcard.nextdateLeitner <= datetime.datetime.now())  
             else:
-                flashcards = flashcardcollection.flashcards.filter_by(nextdate=datetime.datetime.now().date()).all()   
+                flashcards  = flashcardcollection.flashcards.filter(Flashcard.nextdateLeitner <= datetime.datetime.now())
+        
+        elif mode == 'spaced':
+            if catid:
+                temp_flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all() 
+                flashcards = temp_flashcards.filter(Flashcard.nextdateSpaced <= datetime.datetime.now())
+                
+                flash("hh")  
+            else:
+                flashcards  = flashcardcollection.flashcards.filter(Flashcard.nextdateSpaced <= datetime.datetime.now())
+                for element in flashcards:
+                    flash(element)
+                
+                flash("bb")
         elif mode == 'session':
             if "cards" in session:
                 flashcards = flashcardcollection.flashcards.filter(Flashcard.id.in_(session["cards"])).all()
                 if not flashcards:
                     flash('Keine Kicards in dieser Session vorhanden.')
+                    # return to diffent page
                     return redirect(url_for('.question_learn_again'))
-        #else:
-        #    abort(404)
+            elif flashcards == None:
+                flash('Keine Kicards in dieser Session vorhanden.')
+                return redirect(url_for('.flashcardcollection', id=id))
 
-        # No flashcards available anymore
-        if not flashcards:
-            flash('Keine Kicards in dieser Sektion vorhanden.')
-            return redirect(url_for('.flashcardcollection', id=id))
-        else:
-            session[mode + "len"] = len(flashcards)
-            session[mode] = []    
-            for element in flashcards:
-                session[mode].append(element.id)
+        session[mode] = []
+
+        for element in flashcards:
+            session[mode].append(element.id)
+        session[mode + "len"] = len(session[mode])
+    #flash(mode)
+    #flash(session[mode])
+    # No cards to learn
+    if session[mode] == [] :
+        if session[mode] != 'session':  
+            session.pop(mode + "len")
+        session.pop(mode)
+        flash('Keine Kicards in dieser Sektion vorhanden.')
+        return redirect(url_for('.flashcardcollection', id=id))
 
     progress= round((session[mode + "len"] - len(session[mode])) / session[mode + "len"] * 100, 2)
+
+    # Choice of the flashcard
     flashcard = Flashcard.query.get_or_404(random.choice(session[mode]))
-    
+    #flash(flashcard.nextdateSpaced)
+
+    # Check if a image exist and handle returns
     if os.path.exists("app/static/flashcard_img/" +str(flashcard.id) + ".jpg"):
         img = Image.open("app/static/flashcard_img/" +str(flashcard.id) + ".jpg")
         img_name = str(flashcard.id) + ".jpg"
@@ -578,21 +647,26 @@ def learn(id, flashcards=None):
             flashcards=flashcards, 
             collection=flashcardcollection, 
             category=category,
+            mode=mode,
             progress=progress,
             remain=len(session[mode]),
             sum=session[mode + "len"],
+            # with image
             img=img, img_name=img_name)
     else:
+
         return render_template('learn.html', 
             flashcard=flashcard, 
             flashcards=flashcards, 
             collection=flashcardcollection, 
             category=category,
+            mode=mode,
             progress=progress,
             remain=len(session[mode]),
             sum=session[mode + "len"])
 
 
+# intensive Session***************************************************************************************************
 @main.route('/learning_again?')
 @login_required
 def question_learn_again(collId, cardId):
@@ -605,25 +679,26 @@ def question_learn_again(collId, cardId):
 
 
 
-@main.route('/flashcardcollection/<int:id>/reset-cards')
-@login_required
-def reset_cards(id):
-    coll = Collection.query.get_or_404(id)
-    for card in coll.flashcards.all():
-        card.wrong_answered = False
-        card.right_answered = False
-    db.session.add(coll)
-    db.session.commit()
-    return redirect(url_for('.flashcardcollection', id=id))
+# @main.route('/flashcardcollection/<int:id>/reset-cards')
+# @login_required
+# def reset_cards(id):
+#     coll = Collection.query.get_or_404(id)
+#     for card in coll.flashcards.all():
+#         card.wrong_answered = False
+#         card.right_answered = False
+#     db.session.add(coll)
+#     db.session.commit()
+#     return redirect(url_for('.flashcardcollection', id=id))
 
 
-
+# Wrong / Right Buttons***********************************************************************************************
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/wrong')
 @login_required
 def wrong_answer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
     flashcards = request.args.get('flashcards')
-    
+    lencards = request.args.get('lencards')
+    mode = request.args.get('mode')
 
     flashcard.wrong_answered = True
     flashcard.right_answered = False
@@ -632,14 +707,16 @@ def wrong_answer(collId, cardId):
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
 
 
-# Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
-    flashcard.phase = 1
-    waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
-
-    flashcard.lastdate = datetime.datetime.now().date()#strftime("%d.%m.%Y")
-    flashcard.nextdate = (datetime.datetime.now() + datetime.timedelta(
-        days=waitingdays)).date()
+    # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort 
+    if mode == 'leitner':
+        flashcard.phase = 1
+        waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
+        flashcard.nextdateLeitner = (datetime.datetime.now() + datetime.timedelta(
+            days=waitingdays)).date()
     
+    flashcard.lastdate = datetime.datetime.now().date()
+
+            
     # database update    
     db.session.add(flashcard)
     db.session.commit()
@@ -651,15 +728,10 @@ def wrong_answer(collId, cardId):
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/right')
 @login_required
 def right_answer(collId, cardId):
-    # Identifies the object flashcard
+    # Identifies relevant objects
     flashcard = Flashcard.query.get_or_404(cardId)
     lencards = request.args.get('lencards')
-    # Identifies the actual mode
     mode = request.args.get('mode')
-    
-
-    # removes the flashcard out of session 
-    session[mode].remove(cardId)
 
     # Changes attributes of the flashcard
     flashcard.wrong_answered = False
@@ -667,18 +739,20 @@ def right_answer(collId, cardId):
     
     flashcard.sum_right_answered += 1
     flashcard.sum_answered +=1
-    
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
 
-    waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
-    flash("waiting: " + str(waitingdays))
+    if mode == 'leitner':
+        flash("hoho")
+        waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
+        if waitingdays < 7:
+            flashcard.phase += 1
+        flashcard.nextdateLeitner = (datetime.datetime.now() + datetime.timedelta(
+            days=waitingdays)).date()
 
-    if waitingdays < 7:
-        flashcard.phase += 1
-
-    flashcard.lastdate = datetime.datetime.now().date()#.strftime("%d.%m.%Y")
-    flashcard.nextdate = (datetime.datetime.now() + datetime.timedelta(
-        days=waitingdays)).date()
+    flashcard.lastdate = datetime.datetime.now().date()
+    
+    # removes the flashcard out of session 
+    session[mode].remove(cardId)
 
     # database update
     db.session.add(flashcard)
@@ -687,14 +761,103 @@ def right_answer(collId, cardId):
     
     # When no cards are in the current session, this session will be delete
     if(session[mode] == []):
-        session.pop(mode + "len")
         session.pop(mode)
-        flash("Finish")
+
         return redirect(url_for('.flashcardcollection', id=collId))
     flash(session[mode])
 
     # next card
     return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), lencards=lencards, mode=request.args.get('mode')))
+
+
+@main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/easy')
+@login_required
+def easy_answer(collId, cardId):
+    flashcard = Flashcard.query.get_or_404(cardId)
+    flashcards = request.args.get('flashcards')
+    lencards = request.args.get('lencards')
+
+    flashcard.sum_right_answered += 1
+    flashcard.sum_answered +=1
+    flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
+
+    flashcard.lastdate = datetime.datetime.now().date()
+
+    # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
+    flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(
+        days=3))
+    
+    # database update    
+    db.session.add(flashcard)
+    db.session.commit()
+
+    if flashcards == None: 
+        session.pop(request.args.get('mode'))
+        return redirect(url_for('.flashcardcollection', id=collId))
+
+    # next card
+    return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
+
+
+
+@main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/middle')
+@login_required
+def middle_answer(collId, cardId):
+    flashcard = Flashcard.query.get_or_404(cardId)
+    flashcards = request.args.get('flashcards')
+    lencards = request.args.get('lencards')
+
+    flashcard.sum_right_answered += 1
+    flashcard.sum_answered +=1
+    flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
+
+    flashcard.lastdate = datetime.datetime.now().date()
+
+    # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
+    flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(
+        minutes=15))
+    
+    # database update    
+    db.session.add(flashcard)
+    db.session.commit()
+
+    if flashcards == None: 
+        session.pop(request.args.get('mode'))
+        return redirect(url_for('.flashcardcollection', id=collId))
+
+    # next card
+    return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
+
+@main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/hard')
+@login_required
+def hard_answer(collId, cardId):
+    flashcard = Flashcard.query.get_or_404(cardId)
+    flashcards = request.args.get('flashcards')
+    lencards = request.args.get('lencards')
+
+    flashcard.sum_right_answered += 1
+    flashcard.sum_answered +=1
+    flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
+
+    flashcard.lastdate = datetime.datetime.now().date()
+
+    # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
+    flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(
+        minutes=1))
+    
+    # database update    
+    db.session.add(flashcard)
+    db.session.commit()
+
+    if flashcards == None: 
+        session.pop(request.args.get('mode'))
+        return redirect(url_for('.flashcardcollection', id=collId))
+
+    # next card
+    return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
+
+
+
 
 
 
