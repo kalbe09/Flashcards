@@ -598,20 +598,19 @@ def learn(id, flashcards=None):
                 temp_flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all() 
                 flashcards = temp_flashcards.filter(Flashcard.nextdateSpaced <= datetime.datetime.now())
                 
-                flash("hh")  
             else:
                 flashcards  = flashcardcollection.flashcards.filter(Flashcard.nextdateSpaced <= datetime.datetime.now())
                 for element in flashcards:
                     flash(element)
-                
-                flash("bb")
+
         elif mode == 'session':
             if "cards" in session:
                 flashcards = flashcardcollection.flashcards.filter(Flashcard.id.in_(session["cards"])).all()
-                if not flashcards:
-                    flash('Keine Kicards in dieser Session vorhanden.')
+                #if not flashcards:
+                    #flash('Keine Kicards in dieser Session vorhanden.')
                     # return to diffent page
-                    return redirect(url_for('.question_learn_again'))
+                    #return redirect(url_for('.flashcardcollection', id=id))
+                    #return redirect(url_for('.question_learn_again'))
             elif flashcards == None:
                 flash('Keine Kicards in dieser Session vorhanden.')
                 return redirect(url_for('.flashcardcollection', id=id))
