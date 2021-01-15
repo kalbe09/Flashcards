@@ -741,7 +741,6 @@ def right_answer(collId, cardId):
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
 
     if mode == 'leitner':
-        flash("hoho")
         waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
         if waitingdays < 7:
             flashcard.phase += 1
