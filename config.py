@@ -10,17 +10,16 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
     FLASHCARD_SLOW_DB_QUERY_TIME = 0.5
-    MAIL_SERVER = '<insert Mailserver>'
-    MAIL_PORT = 587
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
     MAIL_USE_TLS = True
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_USERNAME = 'MAIL_USERNAME'
+    MAIL_PASSWORD = 'MAIL_PASSWORD'
     FLASHCARD_MAIL_SUBJECT_PREFIX = '[Flashcard]'
-    FLASHCARD_MAIL_SENDER = os.environ.get('FLASHCARD_MAIL_SENDER')
-    FLASHCARD_ADMIN = os.environ.get('FLASHCARD_ADMIN')
+    FLASHCARD_MAIL_SENDER = 'FLASHCARD_MAIL_SENDER'
+    FLASHCARD_ADMIN = 'FLASHCARD_ADMIN'
     DOWNLOAD_FOLDER = os.path.abspath(os.path.dirname(__file__))
     IMAGE_FOLDER = os.path.join(basedir, 'img\\')
-
 
     @staticmethod
     def init_app(app):
