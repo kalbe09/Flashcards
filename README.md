@@ -1,21 +1,15 @@
 # Kicards
 Webbasierte Karteikarten App <br>
 
-Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der Open Education Richtlinien erstellt worden.<br>
+Um das kollektive Lernen zu unterstützen, ist diese Anwendung nach den Software-Anforderung im Sinne von Open Education Richtlinien erstellt worden. Diese wurden im Rahmen eines Selbstversuchs von Dr. Jens Lechtenbörger aufgelistet [Hier gehts zum Paper](http://dx.doi.org/10.21240/mpaed/34/2019.03.02.X).
+
+[Hier gehts zur dazugehörigen Seminararbeit](https://github.com/kalbe09/SeminararbeitOER)
+<br>
 
 <br>
 
-### <u>**ALMS-Framework**</u> <br>
-* **«A» (Access to editing tools)**, <br>
-  * Betriebssystemunabhängigkeit <br>
-  * Freiheit  der  Bearbeitungssoftware <br>
-* **«L» (Level of expertise required to revise or remix)**, <br>
-  * benötigte Expertise zur Software-Nutzung sollte möglichst  gering  sein <br>
-* **«M» (Meaningfully editable)** <br>
-	* Editierbarkeit  der erstellten Materialien <br>
-* **«S» (Source-file access) zur Präzisierung technischer Offenheit vorgestellt.** <br>
-  * Verfügbarkeit der Quellmaterialien. <br>
-
+### <u>**Anforderungen an Software-OER**</u> <br>
+![Software-Anforderungen](/alms_framework.png)
 
 
 ## <u>**Lernfokus</u>**
@@ -27,45 +21,15 @@ Um das kollektive Lernen zu unterstützen, ist diese App nach Anforderungen der 
 <hr>
 
 ## Installation
-1. **Anforderungen installieren** <br>
-  ```pip install -r requirements/common.txt```
+1. **Anforderungen installieren** 
+  ```pip install -r requirements/common.txt``` <br>
 
-2. **Datenbank erstellen**<br>
-  ```python3 manage.py db init```<br>
-    ```python3 manage.py db migrate```<br>
-  ```python3 manage.py db upgrade```
+2. **Datenbank erstellen**
+  ```python manage.py db init```
+    ```python manage.py db migrate```<br>
 
-3. **Webapplikation / Server starten** <br>
-    ```python3 manage.py runserver```
-
-
-
-# musst have, should & could have
-|musst have         |should have                          | could have            |
-|---                |---                                  |---                    |
-|**Benutzerkonto**  |                                     |                       |
-|Erstellen          |Bearbeiten                           |Profilfoto ändern      |
-|                   | Löschen                             |                       |
-|                   |                                     |                       |
-|**Fach**           |                                     |                       |
-|Erstellen          | Löschen                             |                       |
-|                   |Bearbeiten (Name, Prio, Fälligkeit)  |                       |
-| **Lektionen**     |                                     |                       |
-|Erstellen          | Bearbeiten (Name, Prio, Fälligkeit) | Editorleiste          |
-|                   |Löschen                              |                       |
-|                   |                                     |                       |
-|**Kicards**        |                                     |                       |
-|Erstellen          | Bilder                              |Mathematische Formeln  |
-|Heutige Abfrage    | Schlechtesten Karten abfragen       | Karten fürs intensivere Lernen auswählen und lernen|
-|                   |                                     |                       |
-|**Sonstiges**      |                                     |                       |
-|                   | Import / Export                     |Votesystem             |
-|                   |                                     |                       |
-|                   |                                     |                       |
-|                   |                                     |                       |
-
-
-
+3. **Webapplikation / Server starten**
+    ```python manage.py runserver```
 
 
 
