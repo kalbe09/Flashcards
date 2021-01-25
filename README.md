@@ -4,19 +4,24 @@ Webbasierte Karteikarten App <br>
 Um das kollektive Lernen zu unterstützen, ist diese Anwendung nach den Software-Anforderung im Sinne von Open Education Richtlinien erstellt worden. Diese wurden im Rahmen eines Selbstversuchs von Dr. Jens Lechtenbörger aufgelistet [Hier gehts zum Paper](http://dx.doi.org/10.21240/mpaed/34/2019.03.02.X).
 
 [Hier gehts zur dazugehörigen Seminararbeit](https://github.com/kalbe09/SeminararbeitOER)
-<br>
 
 <br>
 
 ### <u>**Anforderungen an Software-OER**</u> <br>
 ![Software-Anforderungen](/alms_framework.png)
 
+## Funkionen
+- Registrierung eines User Accounts
+- Erstellung eigener Themengebiete  
+- Erstellung verschiedener Lektionen
+- Erstellung von Karteikarten in den Themengebieten
+- Abfrage der Karteikarten
+- Angabe von Richtig oder Falsch
+- Nur die falschen Karteikarten lernen
+- Markdown Text für die Erstellung und Bearbeitung
 
-## <u>**Lernfokus</u>**
-- Webapp mit Flask
-- Sicherheitsaspekte
-- Lernmethoden für Karteikarten
-
+## Datenbankmodell
+![Datenbankmodell](/img/Datenbankmodell.png)
 
 <hr>
 
@@ -32,20 +37,21 @@ Um das kollektive Lernen zu unterstützen, ist diese Anwendung nach den Software
     ```python manage.py runserver```
 
 
+<br>
 
-  **Tests starten** <br>
+  **Tests starten** 
   ```python3 manage.py test```
 
-  **Shell öffnen** <br>
+  **Shell öffnen**
   ```python3 manage.py shell```
 <hr>
 
 
 
 ## Todos
-- rename: course -> cardset -> cards
+- Datenbank aktualisieren
 - Lernen
-  - Schleife für falsch beantwortete Karten
+  - Spaced Learning an Seminararbeit anpassen
   - Frage ob Session wiederholt werden soll
       - temp save in session['temp_learn']
 
@@ -88,18 +94,10 @@ Um das kollektive Lernen zu unterstützen, ist diese Anwendung nach den Software
   - Nur 1x voten
 
 
-## Usecases 
-- X Karten nehmen und diese lernen
-    - Karten nehmen: 
-        - während des Lernens
-        - aus Übersicht 
-    - am Ende: Frage ob diese Karten nochmal wiederholt werden sollen
-    - Speicherung der Kombination für später 
-    - zurück zum normalen Lernmodus
-    - Übersicht + Bearbeiten
-
 
 ## Erledigt
+- Lernen
+  - Schleife für falsch beantwortete Karten
 - Wahr/Falsch Button anders platzieren
 - Neue Lektion erstellen
 - doppelte Lektionen möglich
@@ -135,26 +133,5 @@ Um das kollektive Lernen zu unterstützen, ist diese Anwendung nach den Software
   - category
 
 
-## Funkionen
-- Registrierung eines User Accounts
-- Erstellung eigener Themengebiete  
-- Erstellung verschiedener Lektionen
-- Erstellung von Karteikarten in den Themengebieten
-- Abfrage der Karteikarten
-- Angabe von Richtig oder Falsch
-- Nur die falschen Karteikarten lernen
-- Markdown Text für die Erstellung und Bearbeitung
-
-## Fragen
-- Quellen zu flask tutorial etc.? 
-
-
-
-
 <hr>
 
-## Datenbankmodell
-![Datenbankmodell](/img/Datenbankmodell.png)
-
-## Klassendiagramm
-![Klassendiagramm](/img/Klassendiagramm.png)
