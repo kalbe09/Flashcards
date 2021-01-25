@@ -8,7 +8,7 @@ Um das kollektive Lernen zu unterstützen, ist diese Anwendung nach den Software
 <br>
 
 ### <u>**Anforderungen an Software-OER**</u> <br>
-![Software-Anforderungen](/alms_framework.png)
+![Software-Anforderungen](/img/alms_framework.png)
 
 ## Funkionen
 - Registrierung eines User Accounts
