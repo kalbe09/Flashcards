@@ -553,6 +553,23 @@ def edit_category(collId, catid):
     return render_template('edit_category.html', form=form)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # *********************************************************************************************************************
 # Learning 
 # *********************************************************************************************************************
@@ -560,19 +577,27 @@ def edit_category(collId, catid):
 @main.route('/flashcardcollection/<int:id>/learn')
 @login_required
 def learn(id, flashcards=None):
-    # Identifies the object flashcardcollection
     flashcardcollection = Collection.query.get_or_404(id)
-    # Identifies the object category
     category = Category.query.get_or_404(id)
-    
     catid = request.args.get('catid')
     mode = request.args.get('mode')
     now = datetime.datetime.now()
-    # At the beginning of a learning session flashcards == None 
+    #session.pop(mode)
     
 
-    #session.pop(mode)
-    #flash(mode in session)
+
+    # ****************************************************
+    # Break handeling for spaced-method
+    if mode == 'spaced' and "break" in session:
+        if session["break"] > now:
+            flash("Die Pause ist noch nicht vorbei: %s:%s:%s" % (session["break"].hour, session["break"].minute, session["break"].second))
+            #return redirect(url_for('.index'))
+            return redirect(url_for('.flashcardcollection', id=id))
+
+
+
+    # ****************************************************
+    # Get new flashcards 
     if(mode not in session):
         # Selecting new flashcards
         if mode == 'all':
@@ -580,6 +605,7 @@ def learn(id, flashcards=None):
                 flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all()
             else: 
                 flashcards = flashcardcollection.flashcards.filter_by().all()
+        
         elif mode == 'bad_ones':
             if catid:
                 flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).order_by(Flashcard.quote.asc()).limit(50).all()
@@ -594,16 +620,17 @@ def learn(id, flashcards=None):
                 flashcards  = flashcardcollection.flashcards.filter(Flashcard.nextdateLeitner <= datetime.datetime.now())
         
         elif mode == 'spaced':
+            session[mode + "begin"] = now
+            flash(session[mode + "begin"])
             if catid:
                 temp_flashcards = flashcardcollection.flashcards.filter_by(category_id=catid).all() 
                 flashcards = temp_flashcards.filter(Flashcard.nextdateSpaced <= datetime.datetime.now())
                 
             else:
                 flashcards  = flashcardcollection.flashcards.filter(Flashcard.nextdateSpaced <= datetime.datetime.now())
-                for element in flashcards:
-                    flash(element)
 
         elif mode == 'session':
+            session['onetimefalse'] = False
             if "cards" in session:
                 flashcards = flashcardcollection.flashcards.filter(Flashcard.id.in_(session["cards"])).all()
                 #if not flashcards:
@@ -616,25 +643,31 @@ def learn(id, flashcards=None):
                 return redirect(url_for('.flashcardcollection', id=id))
 
         session[mode] = []
-
         for element in flashcards:
             session[mode].append(element.id)
+
         session[mode + "len"] = len(session[mode])
-    #flash(mode)
-    #flash(session[mode])
-    # No cards to learn
+
+
+    # ****************************************************************************
+    # No cards available
     if session[mode] == [] :
-        if session[mode] != 'session':  
-            session.pop(mode + "len")
+        session.pop(mode + "len")
         session.pop(mode)
         flash('Keine Kicards in dieser Sektion vorhanden.')
         return redirect(url_for('.flashcardcollection', id=id))
 
+
+    # ****************************************************************************
+    # Progessbar
     progress= round((session[mode + "len"] - len(session[mode])) / session[mode + "len"] * 100, 2)
 
+    # ****************************************************************************
     # Choice of the flashcard
     flashcard = Flashcard.query.get_or_404(random.choice(session[mode]))
-    #flash(flashcard.nextdateSpaced)
+
+
+
 
     # Check if a image exist and handle returns
     if os.path.exists("app/static/flashcard_img/" +str(flashcard.id) + ".jpg"):
@@ -665,102 +698,60 @@ def learn(id, flashcards=None):
             sum=session[mode + "len"])
 
 
-# intensive Session***************************************************************************************************
-@main.route('/learning_again?')
-@login_required
-def question_learn_again(collId, cardId):
-    if form.validate_on_submit():
-        session["cards"] = session["cardstemp"]
-        return redirect(url_for('.learn', id=id))
-    return render_template('learnagain.html')
-
-
-
-
-
-# @main.route('/flashcardcollection/<int:id>/reset-cards')
-# @login_required
-# def reset_cards(id):
-#     coll = Collection.query.get_or_404(id)
-#     for card in coll.flashcards.all():
-#         card.wrong_answered = False
-#         card.right_answered = False
-#     db.session.add(coll)
-#     db.session.commit()
-#     return redirect(url_for('.flashcardcollection', id=id))
 
 
 # Wrong / Right Buttons***********************************************************************************************
-@main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/wrong')
-@login_required
-def wrong_answer(collId, cardId):
-    flashcard = Flashcard.query.get_or_404(cardId)
-    flashcards = request.args.get('flashcards')
-    lencards = request.args.get('lencards')
-    mode = request.args.get('mode')
-
-    flashcard.wrong_answered = True
-    flashcard.right_answered = False
-    flashcard.sum_wrong_answered += 1
-    flashcard.sum_answered +=1
-    flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
-
-
-    # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort 
-    if mode == 'leitner':
-        flashcard.phase = 1
-        waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
-        flashcard.nextdateLeitner = (datetime.datetime.now() + datetime.timedelta(
-            days=waitingdays)).date()
-    
-    flashcard.lastdate = datetime.datetime.now().date()
-
-            
-    # database update    
-    db.session.add(flashcard)
-    db.session.commit()
-    
-    # next card
-    return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
-
-
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/right')
 @login_required
-def right_answer(collId, cardId):
-    # Identifies relevant objects
+def answer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
     lencards = request.args.get('lencards')
     mode = request.args.get('mode')
+    answer = request.args.get('answer')
 
-    # Changes attributes of the flashcard
-    flashcard.wrong_answered = False
-    flashcard.right_answered = True
-    
-    flashcard.sum_right_answered += 1
+    if answer =='right':
+        flashcard.sum_right_answered += 1
+        session[mode].remove(cardId)
+    elif answer =='wrong':
+        flashcard.sum_wrong_answered += 1
+        if mode == 'session':
+            session['onetimefalse'] = True
+
+
     flashcard.sum_answered +=1
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
 
-    if mode == 'leitner':
-        waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
-        if waitingdays < 7:
-            flashcard.phase += 1
-        flashcard.nextdateLeitner = (datetime.datetime.now() + datetime.timedelta(
-            days=waitingdays)).date()
+    # **** Leitner
 
+    if mode == 'leitner':
+        if answer =='right':
+            if flashcard.phase < 7:
+                flashcard.phase += 1
+                waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
+            else:
+                waitingdays = 365
+            
+        if answer == 'false':
+            flashcard.phase = 1
+            waitingdays = Phasen.query.filter_by(id=flashcard.phase).first().waiting_days
+
+        flashcard.nextdateLeitner = (datetime.datetime.now() + datetime.timedelta(days=waitingdays)).date()
     flashcard.lastdate = datetime.datetime.now().date()
-    
-    # removes the flashcard out of session 
-    session[mode].remove(cardId)
+
+    if mode == 'session' and 'onetimefalse' in session and session['onetimefalse'] == True:
+        return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), lencards=lencards, mode=request.args.get('mode')))
+
 
     # database update
     db.session.add(flashcard)
     db.session.commit()
     
-    
     # When no cards are in the current session, this session will be delete
     if(session[mode] == []):
+        if mode == 'session':
+            session['onetimefalse'] = False
+            session.pop('cards')
         session.pop(mode)
-
         return redirect(url_for('.flashcardcollection', id=collId))
     flash(session[mode])
 
@@ -768,93 +759,114 @@ def right_answer(collId, cardId):
     return redirect(url_for('.learn', id=collId, flashcards=request.args.get('flashcards'), lencards=lencards, mode=request.args.get('mode')))
 
 
-@main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/easy')
+@main.route('/flashcardcollection/<int:id>/learn/spaced')
 @login_required
-def easy_answer(collId, cardId):
-    flashcard = Flashcard.query.get_or_404(cardId)
-    flashcards = request.args.get('flashcards')
-    lencards = request.args.get('lencards')
-
-    flashcard.sum_right_answered += 1
-    flashcard.sum_answered +=1
-    flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
-
-    flashcard.lastdate = datetime.datetime.now().date()
-
-    # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
-    flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(
-        days=3))
+def spaced(id, flashcards=None):
+    flashcardcollection = Collection.query.get_or_404(id)
+    category = Category.query.get_or_404(id)
+    catid = request.args.get('catid')
+    mode = request.args.get('mode')
+    flashcards = session[mode]
     
-    # database update    
-    db.session.add(flashcard)
-    db.session.commit()
+    now = datetime.datetime.now()
+    breaktime = current_user.spaced_duration
+    session_duration = current_user.spaced_duration
 
-    if flashcards == None: 
-        session.pop(request.args.get('mode'))
-        return redirect(url_for('.flashcardcollection', id=collId))
+    finish_break = session[mode + "begin"] + datetime.timedelta(minutes=session_duration)
+    flash(now - finish_break)
 
-    # next card
-    return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
+    progress= round((session[mode + "len"] - len(session[mode])) / session[mode + "len"] * 100, 2)
+
+    # Choice of the flashcard
+    flashcard = Flashcard.query.get_or_404(random.choice(session[mode]))
+
+    # Check if breaktime is passed
+    if finish_break < now :
+        session.pop(mode)
+        session.pop(mode + "len")
+        session["break"] = datetime.datetime.now() + datetime.timedelta(minutes=breaktime)
+        flash(str(breaktime) + " Minuten Pause")
+        return redirect(url_for('.flashcardcollection', id=id))
+
+    #zeroSecondDate = finish_break.AddSeconds(-finish_break.Second);    
+    #flash(zeroSecondDate)
+
+    # Check if a image exist and handle returns
+    if os.path.exists("app/static/flashcard_img/" +str(flashcard.id) + ".jpg"):
+        img = Image.open("app/static/flashcard_img/" +str(flashcard.id) + ".jpg")
+        img_name = str(flashcard.id) + ".jpg"
+        
+        return render_template('learn.html', 
+            flashcard=flashcard, 
+            flashcards=flashcards, 
+            collection=flashcardcollection, 
+            category=category,
+            mode=mode,
+            progress=progress,
+            remain=len(session[mode]),
+            sum=session[mode + "len"],
+            # with image
+            img=img, img_name=img_name,
+            finish_break = finish_break.time())
+    else:
+
+        return render_template('learn.html', 
+            flashcard=flashcard, 
+            flashcards=flashcards, 
+            collection=flashcardcollection, 
+            category=category,
+            mode=mode,
+            progress=progress,
+            remain=len(session[mode]),
+            sum=session[mode + "len"], 
+            finish_break = finish_break.time())
 
 
 
-@main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/middle')
-@login_required
-def middle_answer(collId, cardId):
-    flashcard = Flashcard.query.get_or_404(cardId)
-    flashcards = request.args.get('flashcards')
-    lencards = request.args.get('lencards')
 
-    flashcard.sum_right_answered += 1
-    flashcard.sum_answered +=1
-    flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
-
-    flashcard.lastdate = datetime.datetime.now().date()
-
-    # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
-    flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(
-        minutes=15))
-    
-    # database update    
-    db.session.add(flashcard)
-    db.session.commit()
-
-    if flashcards == None: 
-        session.pop(request.args.get('mode'))
-        return redirect(url_for('.flashcardcollection', id=collId))
-
-    # next card
-    return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
 
 @main.route('/flashcardcollection/<int:collId>/learn/<int:cardId>/hard')
 @login_required
-def hard_answer(collId, cardId):
+def spacedanswer(collId, cardId):
     flashcard = Flashcard.query.get_or_404(cardId)
-    flashcards = request.args.get('flashcards')
+    mode = request.args.get('mode')
+    #flashcards = session[mode] 
     lencards = request.args.get('lencards')
+    answer =request.args.get('answer')
 
-    flashcard.sum_right_answered += 1
+    flash(session[mode] )
+    if answer == 'again':
+        flashcard.sum_wrong_answered += 1
+        flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(seconds=0))
+    elif answer == 'hard':
+        flashcard.sum_wrong_answered += 1
+        flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(minutes=10))
+    elif answer == 'middle':
+        flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(minutes=60))
+    elif answer == 'easy':
+        session[mode].remove(cardId)
+        flashcard.sum_right_answered += 1
+        flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(days=6))
+    elif answer == 'veryeasy':
+        session[mode].remove(cardId)
+        flashcard.sum_right_answered += 1
+        flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(days=30))
+
     flashcard.sum_answered +=1
     flashcard.quote = round(flashcard.sum_wrong_answered/flashcard.sum_answered, 3)
 
     flashcard.lastdate = datetime.datetime.now().date()
 
     # Einstellungsmöglichkeiten, was passiert mit phase wenn falsche Antwort
-    flashcard.nextdateSpaced = (datetime.datetime.now() + datetime.timedelta(
-        minutes=1))
-    
+
     # database update    
     db.session.add(flashcard)
     db.session.commit()
-
-    if flashcards == None: 
+    if session[mode]  == []: 
         session.pop(request.args.get('mode'))
         return redirect(url_for('.flashcardcollection', id=collId))
-
     # next card
-    return redirect(url_for('.learn', id=collId, flashcards=flashcards, lencards=lencards, mode=request.args.get('mode')))
-
-
+    return redirect(url_for('.spaced', id=collId, flashcards=session[mode], lencards=lencards, mode=request.args.get('mode')))
 
 
 
@@ -878,11 +890,15 @@ def add_learningcards(collId, cardId):
 
 
 
+# *********************************************************************************************************************
+# Statistics 
+# *********************************************************************************************************************
+
 @main.route('/flashcardcollection/<int:collId>/stats/')
 @login_required
 def stats(collId):
     flashcardcollection = Collection.query.get_or_404(collId)
-
+    
     # Flashcards in each phases
     cards_in_phases =	{
         "phase1": flashcardcollection.flashcards.filter_by(phase=1).all(),
@@ -900,4 +916,16 @@ def stats(collId):
         flashcardcollection=flashcardcollection, 
         cards_in_phases=cards_in_phases)
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
+

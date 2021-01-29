@@ -16,6 +16,9 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, default=True)
     avatar_hash = db.Column(db.String(32))
     member_since = db.Column(db.DateTime, default=datetime.utcnow)
+
+    minutes_for_break = db.Column(db.Integer, default=10)
+    spaced_duration = db.Column(db.Integer, default=15)
     collections = db.relationship('Collection', backref='user', lazy='dynamic')
     flashcards = db.relationship('Flashcard', backref='user', lazy='dynamic')
 

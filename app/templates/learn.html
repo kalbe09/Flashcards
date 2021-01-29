@@ -77,25 +77,25 @@
                 <div class="col-xs-6 col-sm-6 col-lg-6">
                     <div class="row-12 choiseBtn floatright">
                         {% if mode == 'spaced' %}
-                            <div class="col-xs-4 col-md-4">
-                                <a href="{{ url_for('.hard_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"> <span
-                                        class="btn btn-danger"><i class="fa fa-frown-o"></i>Schwer</span></a>
-                            </div>
-                            <div class="col-xs-4 col-md-4">
-                                <a href="{{ url_for('.middle_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
-                                        class="btn btn-warning"><i class="fa fa-smile-o"></i>Mittel</span></a>
-                            </div>
-                            <div class="col-xs-4 col-md-4">
-                                <a href="{{ url_for('.easy_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
+                            <div class="col-xs-12 col-md-12" style="float: right;">
+                                <a href="{{ url_for('.spacedanswer', collId=collection.id ,cardId=flashcard.id, answer='veryeasy', mode=request.args.get('mode')) }}"><span
+                                    class="btn btn-success"><i class="fa fa-smile-o"></i>Sehr einfach</span></a>
+                                <a href="{{ url_for('.spacedanswer', collId=collection.id ,cardId=flashcard.id, answer='easy', mode=request.args.get('mode')) }}"><span
                                         class="btn btn-success"><i class="fa fa-smile-o"></i>Einfach</span></a>
+                                <a href="{{ url_for('.spacedanswer', collId=collection.id ,cardId=flashcard.id, answer='middle', mode=request.args.get('mode')) }}"><span
+                                        class="btn btn-warning"><i class="fa fa-smile-o"></i>Mittel</span></a>
+                                <a href="{{ url_for('.spacedanswer', collId=collection.id ,cardId=flashcard.id, answer='hard', mode=request.args.get('mode')) }}"> <span
+                                        class="btn btn-danger"><i class="fa fa-frown-o"></i>Schwer</span></a>
+                                <a href="{{ url_for('.spacedanswer', collId=collection.id ,cardId=flashcard.id, answer='again', mode=request.args.get('mode')) }}"><span
+                                        class="btn btn-danger"><i class="fa fa-smile-o"></i>Nochmal</span></a>
                             </div>
+
                         {% else %}
-                            <div class="col-xs-5 col-md-5">
-                                <a href="{{ url_for('.wrong_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"> <span
+                            <div class="col-xs-12 col-md-12" style="float: right;">
+
+                                <a href="{{ url_for('.answer', collId=collection.id ,cardId=flashcard.id, answer='wrong', mode=request.args.get('mode')) }}"> <span
                                         class="btn btn-danger"><i class="fa fa-frown-o"></i>Falsch</span></a>
-                            </div>
-                            <div class="col-xs-5 col-md-5">
-                                <a href="{{ url_for('.right_answer', collId=collection.id ,cardId=flashcard.id, mode=request.args.get('mode')) }}"><span
+                                <a href="{{ url_for('.answer', collId=collection.id ,cardId=flashcard.id, answer='right', mode=request.args.get('mode')) }}"><span
                                         class="btn btn-success"><i class="fa fa-smile-o"></i>Richtig</span></a>
                             </div>
                         {% endif %}
